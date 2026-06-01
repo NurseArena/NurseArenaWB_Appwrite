@@ -1,1 +1,1 @@
-# NurseArenaWB_Appwrite
+# NurseArenaWB
