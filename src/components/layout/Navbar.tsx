@@ -5,7 +5,7 @@ import { useExam } from '@/hooks/useExam';
 import { useAuthStore } from '@/store/authStore';
 import { databases } from '@/lib/appwrite/client';
 import { Query } from 'appwrite';
-import { Moon, Sun, Bell, Star, X, Check } from 'lucide-react';
+import { Moon, Sun, Bell, Star } from 'lucide-react';
 import { LogoIcon } from '@/components/LogoIcon';
 import Link from 'next/link';
 import type { Notification } from '@/types/user';

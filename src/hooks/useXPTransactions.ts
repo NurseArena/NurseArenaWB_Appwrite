@@ -1,12 +1,11 @@
 'use client';
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { databases } from '@/lib/appwrite/client';
 import { useAuthStore } from '@/store/authStore';
 
 const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
 
 export function useMarksHistory() {
-  const [loading, setLoading] = useState(false);
   const user = useAuthStore((s) => s.user);
   const setUser = useAuthStore((s) => s.setUser);
 
@@ -21,8 +20,5 @@ export function useMarksHistory() {
     }
   }, [user, setUser]);
 
-  return {
-    loading,
-    awardMarks,
-  };
+  return { awardMarks };
 }

@@ -5,6 +5,12 @@ import { ID } from 'appwrite';
 
 const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
 import { Button } from '@/components/ui/button';
+
+async function contentHash(text: string): Promise<string> {
+  const data = new TextEncoder().encode(text);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
 import { Card } from '@/components/ui/card';
 import { Upload, FileSpreadsheet, AlertCircle, CheckCircle2 } from 'lucide-react';
 
@@ -27,31 +33,31 @@ const CATEGORY_META: Record<QuestionCategory, { label: string; required: string[
   },
   subject: {
     label: 'Subject-wise',
-    required: ['question_text', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_option', 'subject_id'],
+    required: ['question_text', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_option', 'subject_name'],
     optional: ['explanation', 'difficulty', 'exam_id', 'topic'],
-    csvHeader: 'question_text,option_a,option_b,option_c,option_d,correct_option,subject_id,explanation,difficulty,exam_id,topic',
-    description: 'question_text, option_a-d, correct_option, subject_id (required), explanation, difficulty, exam_id, topic',
+    csvHeader: 'question_text,option_a,option_b,option_c,option_d,correct_option,subject_name,explanation,difficulty,exam_id,topic',
+    description: 'question_text, option_a-d, correct_option, subject_name (required), explanation, difficulty, exam_id, topic',
   },
   topic: {
     label: 'Topic-wise',
     required: ['question_text', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_option', 'topic'],
-    optional: ['explanation', 'difficulty', 'subject_id', 'exam_id'],
-    csvHeader: 'question_text,option_a,option_b,option_c,option_d,correct_option,topic,explanation,difficulty,subject_id,exam_id',
-    description: 'question_text, option_a-d, correct_option, topic (required), explanation, difficulty, subject_id, exam_id',
+    optional: ['explanation', 'difficulty', 'subject_name', 'exam_id'],
+    csvHeader: 'question_text,option_a,option_b,option_c,option_d,correct_option,topic,explanation,difficulty,subject_name,exam_id',
+    description: 'question_text, option_a-d, correct_option, topic (required), explanation, difficulty, subject_name, exam_id',
   },
   pyq: {
     label: 'PYQs',
     required: ['question_text', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_option', 'pyq_year'],
-    optional: ['explanation', 'difficulty', 'subject_id', 'exam_id', 'topic'],
-    csvHeader: 'question_text,option_a,option_b,option_c,option_d,correct_option,pyq_year,explanation,difficulty,subject_id,exam_id,topic',
-    description: 'question_text, option_a-d, correct_option, pyq_year (required), explanation, difficulty, subject_id, exam_id, topic',
+    optional: ['explanation', 'difficulty', 'subject_name', 'exam_id', 'topic'],
+    csvHeader: 'question_text,option_a,option_b,option_c,option_d,correct_option,pyq_year,explanation,difficulty,subject_name,exam_id,topic',
+    description: 'question_text, option_a-d, correct_option, pyq_year (required), explanation, difficulty, subject_name, exam_id, topic',
   },
   rapid_fire: {
     label: 'Rapid Fire',
     required: ['question_text', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_option'],
-    optional: ['explanation', 'difficulty', 'subject_id', 'exam_id', 'topic'],
-    csvHeader: 'question_text,option_a,option_b,option_c,option_d,correct_option,explanation,difficulty,subject_id,exam_id,topic',
-    description: 'question_text, option_a-d, correct_option, explanation, difficulty, subject_id, exam_id, topic',
+    optional: ['explanation', 'difficulty', 'subject_name', 'exam_id', 'topic'],
+    csvHeader: 'question_text,option_a,option_b,option_c,option_d,correct_option,explanation,difficulty,subject_name,exam_id,topic',
+    description: 'question_text, option_a-d, correct_option, explanation, difficulty, subject_name, exam_id, topic',
   },
 };
 
@@ -156,8 +162,10 @@ export function AdminQuestionUpload({ defaultCategory = 'general' }: { defaultCa
           archived: false,
           is_pyq: category === 'pyq',
           pyq_year: category === 'pyq' ? (row.data.pyq_year ?? null) : null,
-          subject_id: row.data.subject_id ?? null,
+          subject_name: row.data.subject_name ?? null,
         };
+        const hashInput = `${course}|${row.data.question_text}|${row.data.option_a}|${row.data.option_b}|${row.data.option_c}|${row.data.option_d}`;
+        insertData.content_hash = await contentHash(hashInput);
         try {
           await databases.createDocument(DB_ID, 'questions', ID.unique(), insertData);
           success++;

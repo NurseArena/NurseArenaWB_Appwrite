@@ -9,7 +9,7 @@ export async function fetchUpcomingLiveQuizzes(examId?: string) {
     Query.equal('status', ['scheduled', 'live']),
     Query.orderAsc('starts_at'),
   ];
-  if (examId) queries.push(Query.equal('exam_id', examId));
+  if (examId) queries.push(Query.equal('exam_code', examId));
 
   const { documents } = await databases.listDocuments(
     DB_ID,
@@ -76,15 +76,15 @@ export async function fetchQuizQuestions(quizEventId: string) {
     DB_ID,
     'live_quiz_events',
     quizEventId
-  ) as unknown as { questionSetId?: string } | null;
+  ) as unknown as { question_set_id?: string } | null;
 
-  if (!quiz?.questionSetId) return [];
+  if (!quiz?.question_set_id) return [];
 
   const { documents } = await databases.listDocuments(
     DB_ID,
     'quiz_questions',
     [
-      Query.equal('quiz_id', quiz.questionSetId),
+      Query.equal('quiz_id', quiz.question_set_id),
       Query.orderAsc('order_index'),
     ]
   );

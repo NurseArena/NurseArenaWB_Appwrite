@@ -24,6 +24,7 @@ export function useLiveQuiz() {
   const [quizState, setQuizState] = useState<'waiting' | 'active' | 'reviewing' | 'ended'>('waiting');
   const user = useAuthStore((s) => s.user);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const questionStartRef = useRef(0);
 
   const fetchUpcoming = useCallback(async (examId?: string) => {
     setLoading(true);
@@ -32,7 +33,7 @@ export function useLiveQuiz() {
         Query.equal('status', ['scheduled', 'live']),
         Query.orderAsc('starts_at'),
       ];
-      if (examId) queries.push(Query.equal('exam_id', examId));
+      if (examId) queries.push(Query.equal('exam_code', examId));
 
       const { documents } = await databases.listDocuments(
         DB_ID,
@@ -61,7 +62,7 @@ export function useLiveQuiz() {
       await databases.createDocument(DB_ID, 'quiz_results', ID.unique(), {
         quizEventId,
         userId: user.id,
-        marksEarned: 0,
+        score: 0,
         correctCount: 0,
         joinedAtIndex: (quiz as any).current_q_index ?? 0,
         disconnectionFlag: false,
@@ -90,6 +91,7 @@ export function useLiveQuiz() {
     const isCorrect = q.correctAnswers.includes(selected);
     const qMarks = q.category === 'I' ? 1 : 2;
     const marksDelta = isCorrect ? qMarks : (q.category === 'I' ? -0.25 : 0);
+    const latencyMs = Math.round(performance.now() - questionStartRef.current);
 
     try {
       await databases.createDocument(DB_ID, 'quiz_answers', ID.unique(), {
@@ -104,6 +106,7 @@ export function useLiveQuiz() {
         setMarksEarned(s => s + marksDelta);
         setCorrectCount(c => c + 1);
       }
+      setTotalLatencyMs(s => s + latencyMs);
     } catch (err) {
       console.error('Failed to submit answer:', err);
     }
@@ -116,7 +119,7 @@ export function useLiveQuiz() {
         'quiz_results',
         [
           Query.equal('quizEventId', quizEventId),
-          Query.orderDesc('marksEarned'),
+          Query.orderDesc('score'),
           Query.orderDesc('correctCount'),
           Query.limit(10),
         ]
@@ -126,7 +129,7 @@ export function useLiveQuiz() {
           userId: r.userId as string,
           name: 'Unknown',
           avatar: undefined,
-          marksEarned: r.marksEarned as number,
+          marksEarned: r.score as number,
           percentage: 0,
           wrong: 0,
           rank: i + 1,
@@ -136,6 +139,10 @@ export function useLiveQuiz() {
       console.error('Failed to fetch leaderboard:', err);
     }
   }, []);
+
+  useEffect(() => {
+    questionStartRef.current = performance.now();
+  }, [currentIndex]);
 
   useEffect(() => {
     if (quizState === 'active' && activeQuiz) {

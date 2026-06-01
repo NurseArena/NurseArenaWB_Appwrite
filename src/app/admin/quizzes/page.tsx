@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
-import { CalendarPlus, RefreshCw, XCircle } from 'lucide-react';
+import { CalendarPlus, XCircle } from 'lucide-react';
 
 const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
 const QUIZ_REQUIRED = 50;
@@ -27,8 +27,14 @@ export default function AdminQuizzesPage() {
   const [status, setStatus] = useState('');
   const [quizzes, setQuizzes] = useState<Record<string, unknown>[]>([]);
   const [poolMap, setPoolMap] = useState<Record<string, { available: number; reserved: number; used: number; quizzes_possible: number }>>({});
-  const [editFailedId, setEditFailedId] = useState<string | null>(null);
-  const [newLiveAtDate, setNewLiveAtDate] = useState('');
+  const fetchQuizzes = async () => {
+    const { documents } = await databases.listDocuments(
+      DB_ID,
+      'quizzes',
+      [Query.orderDesc('$createdAt'), Query.limit(100)]
+    );
+    setQuizzes(documents as Record<string, unknown>[]);
+  };
 
   const fetchPool = async () => {
     const { documents } = await databases.listDocuments(
@@ -56,15 +62,6 @@ export default function AdminQuizzesPage() {
     fetchPool();
     fetchQuizzes();
   }, []);
-
-  const fetchQuizzes = async () => {
-    const { documents } = await databases.listDocuments(
-      DB_ID,
-      'quizzes',
-      [Query.orderDesc('$createdAt'), Query.limit(100)]
-    );
-    setQuizzes(documents as Record<string, unknown>[]);
-  };
 
   const handleCreate = async () => {
     setStatus('');

@@ -17,7 +17,6 @@ export function getRapidFireTier(totalMarksEarned: number) {
 }
 
 export function getNextTier(totalMarksEarned: number) {
-  const current = getRapidFireTier(totalMarksEarned);
   const next = RAPID_FIRE_TIERS.find(t => t.marksMilestone > totalMarksEarned);
   return next ?? null;
 }

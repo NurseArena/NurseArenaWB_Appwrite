@@ -138,7 +138,7 @@ export async function fetchAdminStats(): Promise<AdminStats> {
     [Query.limit(5000)]
   );
 
-  let totalUsers = users.length;
+  const totalUsers = users.length;
 
   const perExam: Record<string, number> = {};
   (users as unknown as Record<string, unknown>[]).forEach((u: any) => {

@@ -74,13 +74,18 @@ export default function AdminTopicsPage() {
   const handleMergeTopics = async () => {
     if (!mergeSourceId || !mergeTargetId || mergeSourceId === mergeTargetId) return;
     setStatus('');
+    const sourceTopic = topics.find(t => t.$id === mergeSourceId);
+    const targetTopic = topics.find(t => t.$id === mergeTargetId);
+    const sourceName = (sourceTopic?.name ?? '') as string;
+    const targetName = (targetTopic?.name ?? '') as string;
+    if (!sourceName || !targetName) return;
     const { documents: questions } = await databases.listDocuments(
       DB_ID,
       'questions',
-      [Query.equal('topic_id', mergeSourceId), Query.limit(5000)]
+      [Query.equal('topic', sourceName), Query.limit(5000)]
     );
     for (const q of questions as any[]) {
-      await databases.updateDocument(DB_ID, 'questions', q.$id, { topic_id: mergeTargetId });
+      await databases.updateDocument(DB_ID, 'questions', q.$id, { topic: targetName });
     }
     await databases.deleteDocument(DB_ID, 'topics', mergeSourceId);
     setStatus('Topics merged successfully');

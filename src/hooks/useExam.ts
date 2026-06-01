@@ -1,5 +1,4 @@
 'use client';
-import { useCallback } from 'react';
 import { useExamStore } from '@/store/examStore';
 import { EXAMS, type ExamCode } from '@/lib/exam-config';
 

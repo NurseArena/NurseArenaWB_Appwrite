@@ -9,7 +9,7 @@ export async function fetchUpcomingMockTests(examId?: string) {
     Query.greaterThan('scheduled_at', new Date().toISOString()),
     Query.orderAsc('scheduled_at'),
   ];
-  if (examId) queries.push(Query.equal('exam_id', examId));
+  if (examId) queries.push(Query.equal('exam_code', examId));
 
   const { documents } = await databases.listDocuments(
     DB_ID,
@@ -59,7 +59,7 @@ export async function startMockTest(eventId: string, _userId: string) {
     DB_ID,
     'questions',
     [
-      Query.equal('exam_code', (event as any).exam_id),
+      Query.equal('exam_code', (event as any).exam_code),
       Query.limit(50),
     ]
   );

@@ -19,7 +19,7 @@ export function useMockTest() {
         Query.greaterThan('scheduled_at', new Date().toISOString()),
         Query.orderAsc('scheduled_at'),
       ];
-      if (examId) queries.push(Query.equal('exam_id', examId));
+      if (examId) queries.push(Query.equal('exam_code', examId));
 
       const { documents } = await databases.listDocuments(
         DB_ID,

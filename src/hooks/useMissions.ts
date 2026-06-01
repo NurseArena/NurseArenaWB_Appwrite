@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { databases } from '@/lib/appwrite/client';
 import { Query, ID } from 'appwrite';
 import { useAuthStore } from '@/store/authStore';
-import type { Mission, UserMission } from '@/types/user';
+import type { Mission } from '@/types/user';
 
 const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
 
@@ -24,7 +24,6 @@ export function useMissions() {
 
       if (!missionData) return;
 
-      const today = new Date().toISOString().split('T')[0];
       const { documents: userMissionData } = await databases.listDocuments(
         DB_ID,
         'user_missions',

@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useQuizStore } from '@/store/quizStore';
 import { useAuthStore } from '@/store/authStore';
 import { databases } from '@/lib/appwrite/client';
@@ -19,6 +19,8 @@ export function useQuiz() {
   const responsesRef = useRef<{ selected: string | string[] | null; category: 'I' | 'II' }[]>([]);
   const scoringProfileRef = useRef<ScoringProfile | null>(null);
   const sessionIdRef = useRef<string | null>(null);
+  const [scoringProfile, setScoringProfile] = useState<ScoringProfile | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   const clearTimer = useCallback(() => {
     if (timerRef.current) {
@@ -46,27 +48,31 @@ export function useQuiz() {
     }, 1000);
   }, [clearTimer, store]);
 
-  const startPerQuestionTimer = useCallback((seconds: number) => {
-    store.setTimeRemaining(seconds);
-    store.setQuestionStartTime(Date.now());
-    perQuestionTimerRef.current = setInterval(() => {
-      const current = useQuizStore.getState().timeRemaining;
-      if (current <= 1) {
-        clearTimer();
-        store.setTimeRemaining(0);
-        const { questions, currentIndex } = useQuizStore.getState();
-        if (currentIndex < questions.length - 1) {
-          store.setCurrentIndex(currentIndex + 1);
-          store.setTimeRemaining(seconds);
-          store.setQuestionStartTime(Date.now());
-          startPerQuestionTimer(seconds);
-        } else {
-          store.setState('finished');
+  const startPerQuestionTimerRef = useRef<((seconds: number) => void) | null>(null);
+
+  useEffect(() => {
+    startPerQuestionTimerRef.current = (seconds: number) => {
+      store.setTimeRemaining(seconds);
+      store.setQuestionStartTime(Date.now());
+      perQuestionTimerRef.current = setInterval(() => {
+        const current = useQuizStore.getState().timeRemaining;
+        if (current <= 1) {
+          clearTimer();
+          store.setTimeRemaining(0);
+          const { questions, currentIndex } = useQuizStore.getState();
+          if (currentIndex < questions.length - 1) {
+            store.setCurrentIndex(currentIndex + 1);
+            store.setTimeRemaining(seconds);
+            store.setQuestionStartTime(Date.now());
+            startPerQuestionTimerRef.current?.(seconds);
+          } else {
+            store.setState('finished');
+          }
+          return;
         }
-        return;
-      }
-      store.setTimeRemaining(current - 1);
-    }, 1000);
+        store.setTimeRemaining(current - 1);
+      }, 1000);
+    };
   }, [clearTimer, store]);
 
   const startQuiz = useCallback(async (quizId: string, subjectId?: string) => {
@@ -85,7 +91,9 @@ export function useQuiz() {
       const quiz = quizzes[0] as Record<string, unknown> | undefined;
 
       if (quiz?.scoring_profile_id) {
-        scoringProfileRef.current = { marks_correct: Number(quiz.marks_correct ?? 1), marks_wrong: Number(quiz.marks_wrong ?? -0.25) } as ScoringProfile;
+        const sp = { marks_correct: Number(quiz.marks_correct ?? 1), marks_wrong: Number(quiz.marks_wrong ?? -0.25) } as ScoringProfile;
+        scoringProfileRef.current = sp;
+        setScoringProfile(sp);
       }
 
       let rawQuestions: Record<string, unknown>[] = [];
@@ -186,12 +194,13 @@ export function useQuiz() {
           );
           if (session) {
             sessionIdRef.current = session.$id;
+            setSessionId(session.$id);
           }
         } catch {}
       }
 
       if (perQuestionSeconds) {
-        startPerQuestionTimer(perQuestionSeconds);
+        startPerQuestionTimerRef.current?.(perQuestionSeconds);
       } else {
         startTimer(totalDuration);
       }
@@ -255,6 +264,7 @@ export function useQuiz() {
             ID.unique(),
             {
               sessionId: sessionIdRef.current,
+              userId: user.id,
               questionId: q.id,
               orderIndex: currentIndex,
               selectedOption: Array.isArray(selected) ? selected.join(',') : selected,
@@ -291,7 +301,7 @@ export function useQuiz() {
       hasSubmittedRef.current = false;
 
       if (perQuestionSeconds) {
-        startPerQuestionTimer(perQuestionSeconds);
+        startPerQuestionTimerRef.current?.(perQuestionSeconds);
       }
     } else {
       const { questions: qs, answers } = useQuizStore.getState();
@@ -380,8 +390,8 @@ export function useQuiz() {
     submitAnswer,
     nextQuestion,
     finishQuiz,
-    scoringProfile: scoringProfileRef.current,
-    sessionId: sessionIdRef.current,
+    scoringProfile,
+    sessionId,
     currentQuestion: store.questions[store.currentIndex],
   };
 }
