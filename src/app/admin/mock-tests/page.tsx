@@ -14,7 +14,7 @@ const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
 
 export default function AdminMockTestsPage() {
   const [mockTests, setMockTests] = useState<Record<string, unknown>[]>([]);
-  const [examCode, setExamCode] = useState('JENPAS-UG');
+  const [examCode, setExamCode] = useState('JENPAS_UG_P1');
   const [title, setTitle] = useState('');
   const [serialNumber, setSerialNumber] = useState('');
   const [durationMins, setDurationMins] = useState('120');
@@ -79,8 +79,11 @@ export default function AdminMockTestsPage() {
           <div className="space-y-2">
             <label className="text-sm font-medium text-ink">Exam</label>
             <Select value={examCode} onChange={(e) => setExamCode(e.target.value)}>
-              <option value="JENPAS-UG">JENPAS-UG</option>
-              <option value="JENPAS-PG">JENPAS-PG</option>
+              <option value="JENPAS_UG_P1">JENPAS (UG) — Paper I</option>
+              <option value="JENPAS_UG_P2">JENPAS (UG) — Paper II</option>
+              <option value="ANM_GNM">ANM/GNM</option>
+              <option value="JEPBN">JEPBN 2026</option>
+              <option value="JEMSCN">JEMScN 2026</option>
             </Select>
           </div>
           <div className="space-y-2">

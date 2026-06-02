@@ -1,5 +1,5 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuiz } from '@/hooks/useQuiz';
 import { QuizCard } from '@/components/quiz/QuizCard';
@@ -45,6 +45,18 @@ export default function QuizSessionPage() {
     }
   }, [state, questions.length, startTimer, timePerQuestion]);
 
+  const answered = currentQuestion ? answers[currentQuestion.id] : undefined;
+  const accuracy = Object.keys(answers).length > 0
+    ? Math.round((Object.values(answers).filter((a) => a.isCorrect).length / Object.keys(answers).length) * 100)
+    : 0;
+
+  const handleTimeUp = useCallback(() => {
+    if (!answered) {
+      submitAnswer(null);
+      nextQuestion();
+    }
+  }, [answered, submitAnswer, nextQuestion]);
+
   useEffect(() => {
     if (state === 'finished') {
       router.push(`/quiz/result?marksEarned=${marksEarned}&totalMarks=${totalMarks}&correct=${correct}&wrong=${wrong}&skipped=${skipped}&negativePenalty=${negativePenalty}`);
@@ -70,11 +82,6 @@ export default function QuizSessionPage() {
     );
   }
 
-  const answered = answers[currentQuestion.id];
-  const accuracy = Object.keys(answers).length > 0
-    ? Math.round((Object.values(answers).filter((a) => a.isCorrect).length / Object.keys(answers).length) * 100)
-    : 0;
-
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl mx-auto">
       {state === 'active' && (
@@ -85,12 +92,7 @@ export default function QuizSessionPage() {
             <QuizTimer
               timeRemaining={timeRemaining}
               duration={timePerQuestion}
-              onTimeUp={() => {
-                if (!answered) {
-                  submitAnswer(null);
-                  nextQuestion();
-                }
-              }}
+              onTimeUp={handleTimeUp}
             />
           </div>
 

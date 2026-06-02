@@ -32,6 +32,9 @@ export default function RapidFirePage() {
   const answered = answers[q?.id];
 
   const startGame = useCallback(async () => {
+    setCurrentIndex(0);
+    setAnswers({});
+    setTimeLeft(15);
     const { documents: raw } = await databases.listDocuments(
       DB_ID,
       'questions',

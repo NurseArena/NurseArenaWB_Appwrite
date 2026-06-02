@@ -3,6 +3,10 @@ import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { AuthProvider } from '@/components/AuthProvider';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { validateEnv } from '@/lib/validate-env';
+
+validateEnv();
 
 const inter = Inter({
   subsets: ['latin'],
@@ -46,7 +50,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="antialiased">
         <ThemeProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <ErrorBoundary>{children}</ErrorBoundary>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

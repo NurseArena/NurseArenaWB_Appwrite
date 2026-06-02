@@ -46,8 +46,8 @@ export interface QuizAttempt {
 }
 
 export interface MockTestEvent {
-  id: number;
-  exam_id: string;
+  id: string;
+  exam_code: string;
   scheduled_at: string;
   duration_min: number;
   max_participants?: number;
@@ -57,8 +57,8 @@ export interface MockTestEvent {
 }
 
 export interface LiveQuizEvent {
-  id: number;
-  exam_id: string;
+  id: string;
+  exam_code: string;
   question_set_id?: string;
   starts_at: string;
   timezone: string;
@@ -68,8 +68,8 @@ export interface LiveQuizEvent {
 }
 
 export interface QuizResult {
-  id: number;
-  quiz_event_id: number;
+  id: string;
+  quiz_event_id: string;
   user_id: string;
   score: number;
   correct_count: number;
@@ -79,8 +79,8 @@ export interface QuizResult {
 }
 
 export interface QuizAnswer {
-  id: number;
-  quiz_event_id: number;
+  id: string;
+  quiz_event_id: string;
   user_id: string;
   question_index: number;
   selected_option?: string;

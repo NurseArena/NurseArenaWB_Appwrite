@@ -28,6 +28,16 @@ const JEMAS_SUB_COURSES = [
   'M.Phil CP', 'M.Phil PSW',
 ];
 
+const JEMAS_EXAM_MAP: Record<string, string> = {
+  'MHA': 'JEMAS_MHA',
+  'MPH': 'JEMAS_MPH',
+  'M.Sc. MLT': 'JEMAS_MLT',
+  'MAN': 'JEMAS_MAN',
+  'M.Sc. MBT': 'JEMAS_MBT',
+  'M.Phil CP': 'JEMAS_MPHILCP',
+  'M.Phil PSW': 'JEMAS_MPHILPSW',
+};
+
 export default function OnboardingPage() {
   const [step, setStep] = useState(1);
   const [displayName, setDisplayName] = useState('');
@@ -84,7 +94,7 @@ export default function OnboardingPage() {
     setLoading(true);
     try {
       const finalExams = targetExams.includes('JEMAS') && jemasSubCourse
-        ? targetExams.filter(e => e !== 'JEMAS').concat(`JEMAS_${jemasSubCourse.replace(/[\s.]/g, '_').toUpperCase()}`)
+        ? targetExams.filter(e => e !== 'JEMAS').concat(JEMAS_EXAM_MAP[jemasSubCourse] ?? `JEMAS_${jemasSubCourse.replace(/[\s.]/g, '').toUpperCase()}`)
         : targetExams;
 
       if (userId) {

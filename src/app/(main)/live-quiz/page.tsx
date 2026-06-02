@@ -21,7 +21,7 @@ export default function LiveQuizPage() {
     if (activeExam) fetchUpcoming(activeExam);
   }, [activeExam, fetchUpcoming]);
 
-  const handleJoin = async (quizId: number) => {
+  const handleJoin = async (quizId: string) => {
     await joinQuiz(quizId);
   };
 
@@ -127,7 +127,7 @@ export default function LiveQuizPage() {
                 <Button
                   size="lg"
                   className="w-full"
-                  onClick={() => handleJoin(Number(quiz.id))}
+                  onClick={() => handleJoin(quiz.id)}
                   disabled={!isLive}
                 >
                   {isLive ? 'Join Now' : 'Not Yet Open'}

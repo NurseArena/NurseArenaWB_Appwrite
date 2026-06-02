@@ -17,7 +17,7 @@ export function SubjectGrid() {
           transition={{ delay: i * 0.05 }}
         >
           <Link
-            href={`/subjects?subject=${subject.name}`}
+            href={`/subjects/${encodeURIComponent(subject.name)}`}
             className="block bg-surface border border-border hover:border-primary/30 rounded-2xl p-5 transition-all shadow-card group"
           >
             <div className="flex items-center justify-between mb-4">

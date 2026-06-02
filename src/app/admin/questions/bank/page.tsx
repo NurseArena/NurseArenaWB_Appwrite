@@ -26,7 +26,25 @@ export default function AdminQuestionBankPage() {
       try {
         const res = await fetch('/api/admin/questions');
         const data = await res.json();
-        if (!cancelled) setQuestions(data.questions ?? []);
+        if (cancelled) return;
+        const qs = data.questions ?? [];
+        setQuestions(qs);
+
+        const hashCounts = new Map<string, number>();
+        const hashIds = new Map<string, string[]>();
+        for (const row of qs as { content_hash: string; id: string }[]) {
+          const h = row.content_hash;
+          if (!h) continue;
+          hashCounts.set(h, (hashCounts.get(h) ?? 0) + 1);
+          const ids = hashIds.get(h) ?? [];
+          ids.push(row.id);
+          hashIds.set(h, ids);
+        }
+        const dupes: { content_hash: string; count: number; ids: string[] }[] = [];
+        for (const [hash, count] of hashCounts) {
+          if (count > 1) dupes.push({ content_hash: hash, count, ids: hashIds.get(hash) ?? [] });
+        }
+        setDuplicates(dupes);
       } catch (err) {
         if (!cancelled) console.error(err);
       } finally {
@@ -35,29 +53,6 @@ export default function AdminQuestionBankPage() {
     };
     fetchData();
     return () => { cancelled = true; };
-  }, [refreshKey]);
-
-  useEffect(() => {
-    (async () => {
-      const res = await fetch('/api/admin/questions');
-      const data = await res.json();
-      if (!data.questions?.length) return;
-      const hashCounts = new Map<string, number>();
-      const hashIds = new Map<string, string[]>();
-      for (const row of data.questions as { content_hash: string; id: string }[]) {
-        const h = row.content_hash;
-        if (!h) continue;
-        hashCounts.set(h, (hashCounts.get(h) ?? 0) + 1);
-        const ids = hashIds.get(h) ?? [];
-        ids.push(row.id);
-        hashIds.set(h, ids);
-      }
-      const dupes: { content_hash: string; count: number; ids: string[] }[] = [];
-      for (const [hash, count] of hashCounts) {
-        if (count > 1) dupes.push({ content_hash: hash, count, ids: hashIds.get(hash) ?? [] });
-      }
-      setDuplicates(dupes);
-    })();
   }, [refreshKey]);
 
   const handleArchive = async (id: string) => {

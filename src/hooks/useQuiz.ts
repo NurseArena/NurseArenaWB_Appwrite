@@ -208,7 +208,7 @@ export function useQuiz() {
       console.error('Failed to start quiz:', err);
       store.setState('idle');
     }
-  }, [store, startTimer, startPerQuestionTimer]);
+  }, [store, startTimer]);
 
   const submitAnswer = useCallback(async (selected: string | string[] | null) => {
     if (hasSubmittedRef.current) return;
@@ -327,7 +327,7 @@ export function useQuiz() {
 
       store.setState('finished');
     }
-  }, [store, startPerQuestionTimer]);
+  }, [store]);
 
   const finishQuiz = useCallback(async () => {
     clearTimer();

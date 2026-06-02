@@ -51,13 +51,15 @@ export default function LeaderboardPage() {
             marksEarned: (entry.marksEarned as number) ?? 0,
             percentage: (entry.percentage as number) ?? 0,
             wrong: (entry.wrong as number) ?? 0,
+            totalMarksEarned: (entry.totalMarksEarned as number) ?? (entry.marksEarned as number) ?? 0,
+            isCurrentUser: (entry.userId as string ?? entry.user_id as string) === user?.id,
           };
         });
         setRows(mapped);
       }
     }
     load();
-  }, [period]);
+  }, [period, config?.code, user?.id]);
 
   const topThree = rows.slice(0, 3);
 

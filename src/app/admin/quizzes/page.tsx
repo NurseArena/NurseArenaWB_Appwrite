@@ -16,7 +16,7 @@ const QUIZ_REQUIRED = 50;
 
 export default function AdminQuizzesPage() {
   const [title, setTitle] = useState('');
-  const [examCode, setExamCode] = useState('JENPAS-UG');
+  const [examCode, setExamCode] = useState('JENPAS_UG_P1');
   const [type, setType] = useState('quiz');
   const [durationMins, setDurationMins] = useState('30');
   const [questionCount, setQuestionCount] = useState('50');
@@ -210,8 +210,11 @@ export default function AdminQuizzesPage() {
           <div className="space-y-2">
             <Label>Exam</Label>
             <Select value={examCode} onChange={(e) => setExamCode(e.target.value)}>
-              <option value="JENPAS-UG">JENPAS-UG</option>
-              <option value="JENPAS-PG">JENPAS-PG</option>
+              <option value="JENPAS_UG_P1">JENPAS (UG) — Paper I</option>
+              <option value="JENPAS_UG_P2">JENPAS (UG) — Paper II</option>
+              <option value="ANM_GNM">ANM/GNM</option>
+              <option value="JEPBN">JEPBN 2026</option>
+              <option value="JEMSCN">JEMScN 2026</option>
             </Select>
           </div>
           <div className="space-y-2">

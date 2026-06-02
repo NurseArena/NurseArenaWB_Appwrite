@@ -14,7 +14,7 @@ import type { MockTestEvent, LiveQuizEvent } from '@/types/user';
 const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
 
 export function AdminScheduler() {
-  const [examCode, setExamCode] = useState('JENPAS-UG');
+  const [examCode, setExamCode] = useState('JENPAS_UG_P1');
   const [mockTests, setMockTests] = useState<(MockTestEvent & { exams?: { name: string; code: string } })[]>([]);
   const [liveQuizzes, setLiveQuizzes] = useState<(LiveQuizEvent & { exams?: { name: string; code: string } })[]>([]);
   const [showMockForm, setShowMockForm] = useState(false);
@@ -143,9 +143,12 @@ export function AdminScheduler() {
           <p className="text-sm text-ink-muted">Manage mock tests and live quiz slots</p>
         </div>
         <div className="flex gap-2">
-          <Select value={examCode} onChange={(e) => setExamCode(e.target.value)} className="w-40">
-            <option value="JENPAS-UG">JENPAS-UG</option>
-            <option value="JENPAS-PG">JENPAS-PG</option>
+          <Select value={examCode} onChange={(e) => setExamCode(e.target.value)} className="w-48">
+            <option value="JENPAS_UG_P1">JENPAS (UG) — Paper I</option>
+            <option value="JENPAS_UG_P2">JENPAS (UG) — Paper II</option>
+            <option value="ANM_GNM">ANM/GNM</option>
+            <option value="JEPBN">JEPBN 2026</option>
+            <option value="JEMSCN">JEMScN 2026</option>
           </Select>
         </div>
       </div>

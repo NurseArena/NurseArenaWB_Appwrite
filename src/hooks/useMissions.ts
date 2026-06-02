@@ -61,13 +61,31 @@ export function useMissions() {
     if (!user) return;
     const today = new Date().toISOString().split('T')[0];
 
-    await databases.createDocument(DB_ID, 'user_missions', ID.unique(), {
-      userId: user.id,
-      missionId,
-      progress,
-      completed: false,
-      assignedDate: today,
-    });
+    const { documents: existing } = await databases.listDocuments(
+      DB_ID,
+      'user_missions',
+      [
+        Query.equal('userId', user.id),
+        Query.equal('missionId', missionId),
+        Query.equal('assignedDate', today),
+        Query.limit(1),
+      ]
+    );
+
+    if (existing?.length > 0) {
+      await databases.updateDocument(DB_ID, 'user_missions', existing[0].$id, {
+        progress,
+        completed: false,
+      });
+    } else {
+      await databases.createDocument(DB_ID, 'user_missions', ID.unique(), {
+        userId: user.id,
+        missionId,
+        progress,
+        completed: false,
+        assignedDate: today,
+      });
+    }
 
     loadMissions();
   }, [user, loadMissions]);
