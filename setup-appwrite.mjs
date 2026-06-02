@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
-import { Client, Databases, ID } from 'node-appwrite';
+import { Client, Databases, ID, Permission, Role } from 'node-appwrite';
 
 const client = new Client()
   .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT)
@@ -14,10 +14,14 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function createCollectionWithTypes(name, attributes) {
+async function createCollectionWithTypes(name, attributes, permissions) {
   let isNew = false;
   try {
-    await databases.createCollection(DB_ID, name, name);
+    const perms = permissions ?? [
+      Permission.create(Role.any()),
+      Permission.read(Role.any()),
+    ];
+    await databases.createCollection(DB_ID, name, name, perms);
     console.log(`  Created collection: ${name}`);
     isNew = true;
   } catch (e) {
