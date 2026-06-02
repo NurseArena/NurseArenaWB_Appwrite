@@ -28,34 +28,42 @@ export default function AdminQuizzesPage() {
   const [quizzes, setQuizzes] = useState<Record<string, unknown>[]>([]);
   const [poolMap, setPoolMap] = useState<Record<string, { available: number; reserved: number; used: number; quizzes_possible: number }>>({});
   const fetchQuizzes = async () => {
-    const { documents } = await databases.listDocuments(
-      DB_ID,
-      'quizzes',
-      [Query.orderDesc('$createdAt'), Query.limit(100)]
-    );
-    setQuizzes(documents as Record<string, unknown>[]);
+    try {
+      const { documents } = await databases.listDocuments(
+        DB_ID,
+        'quizzes',
+        [Query.orderDesc('$createdAt'), Query.limit(100)]
+      );
+      setQuizzes(documents as Record<string, unknown>[]);
+    } catch {
+      // quizzes collection may not exist
+    }
   };
 
   const fetchPool = async () => {
-    const { documents } = await databases.listDocuments(
-      DB_ID,
-      'questions',
-      [Query.limit(5000)]
-    );
-    const counts = new Map<string, { available: number; reserved: number; used: number }>();
-    for (const q of documents as unknown as { exam_code: string; quiz_pool_status: string }[]) {
-      const code = q.exam_code ?? 'UNKNOWN';
-      let entry = counts.get(code);
-      if (!entry) { entry = { available: 0, reserved: 0, used: 0 }; counts.set(code, entry); }
-      if (q.quiz_pool_status === 'available') entry.available++;
-      else if (q.quiz_pool_status === 'reserved') entry.reserved++;
-      else if (q.quiz_pool_status === 'used') entry.used++;
+    try {
+      const { documents } = await databases.listDocuments(
+        DB_ID,
+        'questions',
+        [Query.limit(5000)]
+      );
+      const counts = new Map<string, { available: number; reserved: number; used: number }>();
+      for (const q of documents as unknown as { exam_code: string; quiz_pool_status: string }[]) {
+        const code = q.exam_code ?? 'UNKNOWN';
+        let entry = counts.get(code);
+        if (!entry) { entry = { available: 0, reserved: 0, used: 0 }; counts.set(code, entry); }
+        if (q.quiz_pool_status === 'available') entry.available++;
+        else if (q.quiz_pool_status === 'reserved') entry.reserved++;
+        else if (q.quiz_pool_status === 'used') entry.used++;
+      }
+      const map: Record<string, { available: number; reserved: number; used: number; quizzes_possible: number }> = {};
+      for (const [code, c] of counts) {
+        map[code] = { ...c, quizzes_possible: Math.floor(c.available / QUIZ_REQUIRED) };
+      }
+      setPoolMap(map);
+    } catch {
+      // questions collection may not exist
     }
-    const map: Record<string, { available: number; reserved: number; used: number; quizzes_possible: number }> = {};
-    for (const [code, c] of counts) {
-      map[code] = { ...c, quizzes_possible: Math.floor(c.available / QUIZ_REQUIRED) };
-    }
-    setPoolMap(map);
   };
 
   useEffect(() => {

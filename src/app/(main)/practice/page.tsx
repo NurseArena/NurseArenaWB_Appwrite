@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
@@ -14,18 +14,21 @@ export default function PracticePage() {
   const setActiveExam = useExamStore((s) => s.setActiveExam);
   const [ready, setReady] = useState(false);
   const targetExams = user?.targetExams ?? [];
+  const handled = useRef(false);
 
   useEffect(() => {
-    if (!user) return;
-    if (targetExams.length <= 1) {
-      if (targetExams.length === 1) {
-        setActiveExam(targetExams[0] as keyof typeof EXAMS);
+    if (!user || handled.current) return;
+    const exams = user.targetExams ?? [];
+    if (exams.length <= 1) {
+      handled.current = true;
+      if (exams.length === 1) {
+        setActiveExam(exams[0] as keyof typeof EXAMS);
       }
       router.replace('/subjects');
     } else {
       setReady(true);
     }
-  }, [user, targetExams, setActiveExam, router]);
+  }, [user, setActiveExam, router]);
 
   if (!user) {
     return (

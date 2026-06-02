@@ -5,7 +5,7 @@ import { Permission, Role } from 'appwrite';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuthStore, normalizeProfile } from '@/store/authStore';
+import { useAuthStore } from '@/store/authStore';
 import type { Profile } from '@/types/user';
 import { Mail } from 'lucide-react';
 import { LogoIcon } from '@/components/LogoIcon';
@@ -98,7 +98,7 @@ export default function LoginPage() {
         : profile.targetExams ?? [];
       const isOnboarded = targetExams.length > 0;
       const isAdmin = profile.is_admin ?? false;
-      setUser(normalizeProfile({ ...profile, isAdmin }));
+      setUser(profile);
       setLoading(false);
 
       if (isAdmin) {

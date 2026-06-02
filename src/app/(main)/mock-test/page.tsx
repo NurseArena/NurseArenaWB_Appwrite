@@ -17,15 +17,20 @@ export default function MockTestPage() {
   const [quizzes, setQuizzes] = useState<Record<string, unknown>[]>([]);
 
   useEffect(() => {
-    const fetch = async () => {
-      const { documents } = await databases.listDocuments(DB_ID, 'quizzes', [
-        Query.equal('exam_code', activeExam),
-        Query.orderDesc('$createdAt'),
-        Query.limit(20),
-      ]);
-      if (documents) setQuizzes(documents as Record<string, unknown>[]);
-    };
-    fetch();
+    let cancelled = false;
+    (async () => {
+      try {
+        const { documents } = await databases.listDocuments(DB_ID, 'quizzes', [
+          Query.equal('exam_code', activeExam),
+          Query.orderDesc('$createdAt'),
+          Query.limit(20),
+        ]);
+        if (!cancelled && documents) setQuizzes(documents as Record<string, unknown>[]);
+      } catch {
+        // quizzes collection may not exist
+      }
+    })();
+    return () => { cancelled = true; };
   }, [activeExam]);
 
   return (

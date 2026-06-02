@@ -32,21 +32,27 @@ export function AdminScheduler() {
   const [liveDuration, setLiveDuration] = useState('30');
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
-      const { documents: mtDocs } = await databases.listDocuments(
-        DB_ID,
-        'mock_test_events',
-        [Query.orderAsc('scheduled_at'), Query.limit(100)]
-      );
-      setMockTests(mtDocs as unknown as (MockTestEvent & { exams?: { name: string; code: string } })[]);
+      try {
+        const { documents: mtDocs } = await databases.listDocuments(
+          DB_ID,
+          'mock_test_events',
+          [Query.orderAsc('scheduled_at'), Query.limit(100)]
+        );
+        if (!cancelled) setMockTests(mtDocs as unknown as (MockTestEvent & { exams?: { name: string; code: string } })[]);
 
-      const { documents: lqDocs } = await databases.listDocuments(
-        DB_ID,
-        'live_quiz_events',
-        [Query.orderAsc('starts_at'), Query.limit(100)]
-      );
-      setLiveQuizzes(lqDocs as unknown as (LiveQuizEvent & { exams?: { name: string; code: string } })[]);
+        const { documents: lqDocs } = await databases.listDocuments(
+          DB_ID,
+          'live_quiz_events',
+          [Query.orderAsc('starts_at'), Query.limit(100)]
+        );
+        if (!cancelled) setLiveQuizzes(lqDocs as unknown as (LiveQuizEvent & { exams?: { name: string; code: string } })[]);
+      } catch {
+        // collections may not exist
+      }
     })();
+    return () => { cancelled = true; };
   }, [refreshKey]);
 
   const getWeekNumber = (date: Date) => {

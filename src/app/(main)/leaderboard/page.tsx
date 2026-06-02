@@ -31,19 +31,17 @@ export default function LeaderboardPage() {
   const { examName, config } = useExam();
 
   useEffect(() => {
-    async function load() {
-      const examId = config?.code;
-
-      const { documents } = await databases.listDocuments(DB_ID, 'leaderboard', [
-        ...(examId ? [Query.equal('exam_id', examId)] : []),
-        Query.orderDesc('marksEarned'),
-        Query.limit(50),
-      ]);
-
-      const data = documents;
-      if (data) {
-        const mapped: LeaderboardRow[] = data.map((entry: Record<string, unknown>, i: number) => {
-          return {
+    let cancelled = false;
+    (async () => {
+      try {
+        const examId = config?.code;
+        const { documents } = await databases.listDocuments(DB_ID, 'leaderboard', [
+          ...(examId ? [Query.equal('exam_id', examId)] : []),
+          Query.orderDesc('marksEarned'),
+          Query.limit(50),
+        ]);
+        if (!cancelled && documents) {
+          const mapped: LeaderboardRow[] = documents.map((entry: Record<string, unknown>, i: number) => ({
             rank: i + 1,
             userId: entry.userId as string ?? entry.user_id as string,
             name: (entry.displayName as string) ?? 'Anonymous',
@@ -53,12 +51,14 @@ export default function LeaderboardPage() {
             wrong: (entry.wrong as number) ?? 0,
             totalMarksEarned: (entry.totalMarksEarned as number) ?? (entry.marksEarned as number) ?? 0,
             isCurrentUser: (entry.userId as string ?? entry.user_id as string) === user?.id,
-          };
-        });
-        setRows(mapped);
+          }));
+          setRows(mapped);
+        }
+      } catch {
+        // leaderboard collection may not exist
       }
-    }
-    load();
+    })();
+    return () => { cancelled = true; };
   }, [period, config?.code, user?.id]);
 
   const topThree = rows.slice(0, 3);

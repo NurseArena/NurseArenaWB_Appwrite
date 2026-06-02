@@ -22,14 +22,20 @@ export default function AdminMockTestsPage() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
-      const { documents } = await databases.listDocuments(
-        DB_ID,
-        'mock_tests',
-        [Query.orderAsc('serial_number'), Query.limit(100)]
-      );
-      if (documents) setMockTests(documents as Record<string, unknown>[]);
+      try {
+        const { documents } = await databases.listDocuments(
+          DB_ID,
+          'mock_tests',
+          [Query.orderAsc('serial_number'), Query.limit(100)]
+        );
+        if (!cancelled && documents) setMockTests(documents as Record<string, unknown>[]);
+      } catch {
+        // mock_tests collection may not exist
+      }
     })();
+    return () => { cancelled = true; };
   }, [refreshKey]);
 
   const handleCreate = async () => {

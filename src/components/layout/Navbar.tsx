@@ -1,5 +1,5 @@
 'use client';
-import { useSyncExternalStore, useState, useEffect } from 'react';
+import { useSyncExternalStore, useState, useEffect, useRef } from 'react';
 import { useTheme } from '@/components/ThemeProvider';
 import { useExam } from '@/hooks/useExam';
 import { useAuthStore } from '@/store/authStore';
@@ -21,28 +21,33 @@ export function Navbar() {
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifPanel, setShowNotifPanel] = useState(false);
+  const fetched = useRef(false);
 
   useEffect(() => {
-    if (!user) return;
-    const fetchNotifs = async () => {
-      const { documents } = await databases.listDocuments(
-        DB_ID,
-        'notifications',
-        [Query.orderDesc('$createdAt'), Query.limit(25)]
-      );
-      if (documents) {
-        const userExams = (user as never as Record<string, unknown>).targetExams as string[] ?? [];
-        const filtered = (documents as unknown as Notification[]).filter(
-          (n) => {
-            const exams = typeof n.targetExams === 'string' ? JSON.parse(n.targetExams || '[]') : n.targetExams ?? [];
-            return exams.includes('all') || exams.some((e: string) => userExams.includes(e));
-          }
+    if (!user || fetched.current) return;
+    fetched.current = true;
+    (async () => {
+      try {
+        const { documents } = await databases.listDocuments(
+          DB_ID,
+          'notifications',
+          [Query.orderDesc('$createdAt'), Query.limit(25)]
         );
-        setNotifications(filtered);
+        if (documents) {
+          const userExams = (user as never as Record<string, unknown>).targetExams as string[] ?? [];
+          const filtered = (documents as unknown as Notification[]).filter(
+            (n) => {
+              const exams = typeof n.targetExams === 'string' ? JSON.parse(n.targetExams || '[]') : n.targetExams ?? [];
+              return exams.includes('all') || exams.some((e: string) => userExams.includes(e));
+            }
+          );
+          setNotifications(filtered);
+        }
+      } catch {
+        // notifications collection may not exist or no permission — silently ignore
       }
-    };
-    fetchNotifs();
-  }, [user]);
+    })();
+  }, []);
 
   const unreadCount = notifications.filter(
     (n) => !(n.readBy ?? []).includes(user?.id ?? '')
@@ -50,32 +55,36 @@ export function Navbar() {
 
   const markAsRead = async (notifId: string) => {
     if (!user) return;
-    const notif = notifications.find(n => n.id === notifId);
-    const readBy = [...(notif?.readBy ?? []), user.id];
-    await databases.updateDocument(DB_ID, 'notifications', notifId, {
-      readBy: JSON.stringify(readBy),
-    });
-    setNotifications((prev) =>
-      prev.map((n) =>
-        n.id === notifId ? { ...n, readBy } : n
-      )
-    );
+    try {
+      const notif = notifications.find(n => n.id === notifId);
+      const readBy = [...(notif?.readBy ?? []), user.id];
+      await databases.updateDocument(DB_ID, 'notifications', notifId, {
+        readBy: JSON.stringify(readBy),
+      });
+      setNotifications((prev) =>
+        prev.map((n) =>
+          n.id === notifId ? { ...n, readBy } : n
+        )
+      );
+    } catch { /* notification may not exist or no permission */ }
   };
 
   const markAllAsRead = async () => {
     if (!user) return;
-    const unread = notifications.filter((n) => !(n.readBy ?? []).includes(user.id));
-    for (const n of unread) {
-      const readBy = [...(n.readBy ?? []), user.id];
-      await databases.updateDocument(DB_ID, 'notifications', n.id, {
-        readBy: JSON.stringify(readBy),
-      });
-    }
-    setNotifications((prev) =>
-      prev.map((n) =>
-        (n.readBy ?? []).includes(user.id) ? n : { ...n, readBy: [...(n.readBy ?? []), user.id] }
-      )
-    );
+    try {
+      const unread = notifications.filter((n) => !(n.readBy ?? []).includes(user.id));
+      for (const n of unread) {
+        const readBy = [...(n.readBy ?? []), user.id];
+        await databases.updateDocument(DB_ID, 'notifications', n.id, {
+          readBy: JSON.stringify(readBy),
+        });
+      }
+      setNotifications((prev) =>
+        prev.map((n) =>
+          (n.readBy ?? []).includes(user.id) ? n : { ...n, readBy: [...(n.readBy ?? []), user.id] }
+        )
+      );
+    } catch { /* notification may not exist or no permission */ }
   };
 
   return (

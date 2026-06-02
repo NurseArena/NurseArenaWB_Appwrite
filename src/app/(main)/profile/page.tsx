@@ -40,9 +40,8 @@ export default function ProfilePage() {
           authUser.$id
         );
         if (profile) {
-          const normalized = normalizeProfile(profile);
-          setFetchedUser(normalized);
-          setUser(normalized);
+          setFetchedUser(normalizeProfile(profile));
+          setUser(profile);
         }
       } catch {
         // Not logged in

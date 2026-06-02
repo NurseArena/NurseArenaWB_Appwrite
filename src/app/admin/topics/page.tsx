@@ -22,30 +22,42 @@ export default function AdminTopicsPage() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
-      const { documents } = await databases.listDocuments(
-        DB_ID,
-        'subjects',
-        [Query.limit(100)]
-      );
-      if (documents) setSubjects(documents as Record<string, unknown>[]);
+      try {
+        const { documents } = await databases.listDocuments(
+          DB_ID,
+          'subjects',
+          [Query.limit(100)]
+        );
+        if (!cancelled && documents) setSubjects(documents as Record<string, unknown>[]);
+      } catch {
+        // subjects collection may not exist
+      }
     })();
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
     if (!selectedSubject) { setTopics([]); return; }
+    let cancelled = false;
     (async () => {
-      const { documents } = await databases.listDocuments(
-        DB_ID,
-        'topics',
-        [
-          Query.equal('subject_id', selectedSubject),
-          Query.orderAsc('name'),
-          Query.limit(200),
-        ]
-      );
-      if (documents) setTopics(documents as Record<string, unknown>[]);
+      try {
+        const { documents } = await databases.listDocuments(
+          DB_ID,
+          'topics',
+          [
+            Query.equal('subject_id', selectedSubject),
+            Query.orderAsc('name'),
+            Query.limit(200),
+          ]
+        );
+        if (!cancelled && documents) setTopics(documents as Record<string, unknown>[]);
+      } catch {
+        // topics collection may not exist
+      }
     })();
+    return () => { cancelled = true; };
   }, [selectedSubject, refreshKey]);
 
   const handleAddTopic = async () => {

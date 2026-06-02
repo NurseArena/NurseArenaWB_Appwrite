@@ -15,29 +15,36 @@ export default function AdminDashboard() {
   const [poolData, setPoolData] = useState<Record<string, { available: number; reserved: number; used: number; quizzes_possible: number }>>({});
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
-      const { documents: questions } = await databases.listDocuments(
-        DB_ID,
-        'questions',
-        [Query.limit(5000)]
-      );
+      try {
+        const { documents: questions } = await databases.listDocuments(
+          DB_ID,
+          'questions',
+          [Query.limit(5000)]
+        );
+        if (cancelled) return;
 
-      const counts = new Map<string, { available: number; reserved: number; used: number }>();
-      for (const q of questions as unknown as { exam_code: string; quiz_pool_status: string }[]) {
-        const code = q.exam_code ?? 'UNKNOWN';
-        let entry = counts.get(code);
-        if (!entry) { entry = { available: 0, reserved: 0, used: 0 }; counts.set(code, entry); }
-        if (q.quiz_pool_status === 'available') entry.available++;
-        else if (q.quiz_pool_status === 'reserved') entry.reserved++;
-        else if (q.quiz_pool_status === 'used') entry.used++;
-      }
+        const counts = new Map<string, { available: number; reserved: number; used: number }>();
+        for (const q of questions as unknown as { exam_code: string; quiz_pool_status: string }[]) {
+          const code = q.exam_code ?? 'UNKNOWN';
+          let entry = counts.get(code);
+          if (!entry) { entry = { available: 0, reserved: 0, used: 0 }; counts.set(code, entry); }
+          if (q.quiz_pool_status === 'available') entry.available++;
+          else if (q.quiz_pool_status === 'reserved') entry.reserved++;
+          else if (q.quiz_pool_status === 'used') entry.used++;
+        }
 
-      const map: Record<string, { available: number; reserved: number; used: number; quizzes_possible: number }> = {};
-      for (const [code, c] of counts) {
-        map[code] = { ...c, quizzes_possible: Math.floor(c.available / QUIZ_REQUIRED) };
+        const map: Record<string, { available: number; reserved: number; used: number; quizzes_possible: number }> = {};
+        for (const [code, c] of counts) {
+          map[code] = { ...c, quizzes_possible: Math.floor(c.available / QUIZ_REQUIRED) };
+        }
+        if (!cancelled) setPoolData(map);
+      } catch {
+        // questions collection may not exist
       }
-      setPoolData(map);
     })();
+    return () => { cancelled = true; };
   }, []);
 
   const links = [

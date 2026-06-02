@@ -16,17 +16,23 @@ export default function PYQPage() {
   const [years, setYears] = useState<number[]>([]);
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
-      const { documents } = await databases.listDocuments(DB_ID, 'questions', [
-        Query.equal('is_pyq', true),
-        Query.isNotNull('pyq_year'),
-        Query.limit(1000),
-      ]);
-      if (documents) {
-        const unique = [...new Set(documents.map((q: any) => q.pyq_year as number))].filter(Boolean).sort((a, b) => (b as number) - (a as number));
-        setYears(unique as number[]);
+      try {
+        const { documents } = await databases.listDocuments(DB_ID, 'questions', [
+          Query.equal('is_pyq', true),
+          Query.isNotNull('pyq_year'),
+          Query.limit(1000),
+        ]);
+        if (!cancelled && documents) {
+          const unique = [...new Set(documents.map((q: any) => q.pyq_year as number))].filter(Boolean).sort((a, b) => (b as number) - (a as number));
+          setYears(unique as number[]);
+        }
+      } catch {
+        // questions collection may not exist
       }
     })();
+    return () => { cancelled = true; };
   }, []);
 
   return (

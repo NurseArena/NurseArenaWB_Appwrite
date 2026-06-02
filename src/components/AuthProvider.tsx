@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, type ReactNode } from 'react';
 import { account, databases } from '@/lib/appwrite/client';
-import { useAuthStore, normalizeProfile } from '@/store/authStore';
+import { useAuthStore } from '@/store/authStore';
 import { useExamStore } from '@/store/examStore';
 import type { Profile } from '@/types/user';
 
@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (targetExams.length > 0) {
             setActiveExam(targetExams[0] as never);
           }
-          setUser(normalizeProfile(profile));
+          setUser(profile);
         } else {
           setUser({
             id: authUser.$id,
