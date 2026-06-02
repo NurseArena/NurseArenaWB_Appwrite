@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { account, databases } from '@/lib/appwrite/client';
 import { ID } from 'appwrite';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import { Mail } from 'lucide-react';
 import { LogoIcon } from '@/components/LogoIcon';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/store/authStore';
 
 const ALLOWED_DOMAINS = [
   'gmail.com', 'googlemail.com', 'hotmail.com', 'hotmail.in', 'hotmail.co.uk',
@@ -28,8 +29,22 @@ export default function RegisterPage() {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [confirmed, setConfirmed] = useState(false);
   const router = useRouter();
+  const user = useAuthStore((s) => s.user);
+
+  useEffect(() => {
+    if (user) {
+      const targetExams = (user.targetExams ?? []) as string[];
+      const isOnboarded = targetExams.length > 0;
+      if (user.isAdmin) {
+        router.push('/admin');
+      } else if (!isOnboarded) {
+        router.push('/onboarding');
+      } else {
+        router.push('/dashboard');
+      }
+    }
+  }, [user, router]);
 
   const handleEmailRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,6 +58,8 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       const newUser = await account.create(ID.unique(), email, password, name);
+      try { await account.deleteSession('current'); } catch {}
+      await account.createEmailPasswordSession(email, password);
       const userId = newUser.$id;
 
       try {
@@ -68,11 +85,8 @@ export default function RegisterPage() {
         console.error('Register: profile create error', profileErr);
       }
 
-      const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
-      await account.createVerification(`${origin}/verify`);
-
       setLoading(false);
-      setConfirmed(true);
+      router.push('/onboarding');
     } catch (err: any) {
       if (err?.type === 'user_already_exists') {
         setError('An account with this email already exists.');
@@ -82,26 +96,6 @@ export default function RegisterPage() {
       setLoading(false);
     }
   };
-
-  if (confirmed) {
-    return (
-      <div className="min-h-screen bg-bg flex items-center justify-center px-4">
-        <div className="w-full max-w-sm text-center space-y-4">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center mx-auto">
-            <LogoIcon size={56} />
-          </div>
-          <h1 className="text-2xl font-bold text-ink">Check your email</h1>
-          <p className="text-sm text-ink-muted">
-            We sent a confirmation link to <span className="font-medium text-ink">{email}</span>.
-            Click it to activate your account, then come back and log in.
-          </p>
-          <Link href="/login" className="block text-primary font-bold hover:underline text-sm">
-            Back to login
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-bg flex items-center justify-center px-4">
