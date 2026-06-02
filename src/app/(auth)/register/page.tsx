@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { account, databases } from '@/lib/appwrite/client';
-import { ID } from 'appwrite';
+import { ID, Permission, Role } from 'appwrite';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -79,7 +79,12 @@ export default function RegisterPage() {
             rapidFireUnlockedTier: 1,
             streakDays: 0,
             profileCompletePct: 0,
-          }
+          },
+          [
+            Permission.read(Role.user(userId)),
+            Permission.update(Role.user(userId)),
+            Permission.delete(Role.user(userId)),
+          ]
         );
       } catch (profileErr) {
         console.error('Register: profile create error', profileErr);

@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { account, databases } from '@/lib/appwrite/client';
+import { Permission, Role } from 'appwrite';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -62,7 +63,12 @@ export default function LoginPage() {
               rapidFireUnlockedTier: 1,
               streakDays: 0,
               profileCompletePct: 0,
-            }
+            },
+            [
+              Permission.read(Role.user(userId)),
+              Permission.update(Role.user(userId)),
+              Permission.delete(Role.user(userId)),
+            ]
           );
         } catch (createErr) {
           console.error('Login: profile create error', createErr);
