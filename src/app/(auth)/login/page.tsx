@@ -12,6 +12,51 @@ import { LogoIcon } from '@/components/LogoIcon';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+async function getOrCreateProfile(userId: string, user: any) {
+  try {
+    return await databases.getDocument(
+      process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
+      'profiles',
+      userId
+    );
+  } catch (err: any) {
+    if (err?.code !== 404) throw err;
+  }
+  try {
+    return await databases.createDocument(
+      process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
+      'profiles',
+      userId,
+      {
+        email: user.email ?? '',
+        displayName: user.name ?? user.email?.split('@')[0] ?? 'Student',
+        targetExams: JSON.stringify([]),
+        totalMarksEarned: 0,
+        totalQuestionsAttempted: 0,
+        totalCorrect: 0,
+        totalWrong: 0,
+        totalSkipped: 0,
+        rapidFireUnlockedTier: 1,
+        streakDays: 0,
+        profileCompletePct: 0,
+      },
+      [
+        Permission.read(Role.user(userId)),
+        Permission.update(Role.user(userId)),
+        Permission.delete(Role.user(userId)),
+      ]
+    );
+  } catch (err: any) {
+    if (err?.code !== 409) throw err;
+    // Race condition: doc was created between get and create — fetch it
+    return await databases.getDocument(
+      process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
+      'profiles',
+      userId
+    );
+  }
+}
+
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -34,48 +79,11 @@ export default function LoginPage() {
       const user = await account.get();
       const userId = user.$id;
 
-      let profile: any;
-      try {
-        profile = await databases.getDocument(
-          process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
-          'profiles',
-          userId
-        );
-      } catch {
-        profile = null;
-      }
-
+      const profile: any = await getOrCreateProfile(userId, user);
       if (!profile) {
-        try {
-          profile = await databases.createDocument(
-            process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
-            'profiles',
-            userId,
-            {
-              email: user.email ?? '',
-              displayName: user.name ?? user.email?.split('@')[0] ?? 'Student',
-              targetExams: JSON.stringify([]),
-              totalMarksEarned: 0,
-              totalQuestionsAttempted: 0,
-              totalCorrect: 0,
-              totalWrong: 0,
-              totalSkipped: 0,
-              rapidFireUnlockedTier: 1,
-              streakDays: 0,
-              profileCompletePct: 0,
-            },
-            [
-              Permission.read(Role.user(userId)),
-              Permission.update(Role.user(userId)),
-              Permission.delete(Role.user(userId)),
-            ]
-          );
-        } catch (createErr) {
-          console.error('Login: profile create error', createErr);
-          setError('Could not create profile.');
-          setLoading(false);
-          return;
-        }
+        setError('Could not load profile.');
+        setLoading(false);
+        return;
       }
 
       const targetExams = typeof profile.targetExams === 'string'
@@ -128,6 +136,7 @@ export default function LoginPage() {
             <Input
               type="password"
               placeholder="••••••••"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

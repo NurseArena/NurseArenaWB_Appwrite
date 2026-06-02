@@ -23,6 +23,50 @@ function isEmailAllowed(email: string) {
   return ALLOWED_DOMAINS.includes(domain);
 }
 
+async function getOrCreateProfile(userId: string, user: { email: string; name?: string }) {
+  try {
+    return await databases.getDocument(
+      process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
+      'profiles',
+      userId
+    );
+  } catch (err: any) {
+    if (err?.code !== 404) throw err;
+  }
+  try {
+    return await databases.createDocument(
+      process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
+      'profiles',
+      userId,
+      {
+        email: user.email,
+        displayName: user.name || user.email,
+        targetExams: JSON.stringify([]),
+        totalMarksEarned: 0,
+        totalQuestionsAttempted: 0,
+        totalCorrect: 0,
+        totalWrong: 0,
+        totalSkipped: 0,
+        rapidFireUnlockedTier: 1,
+        streakDays: 0,
+        profileCompletePct: 0,
+      },
+      [
+        Permission.read(Role.user(userId)),
+        Permission.update(Role.user(userId)),
+        Permission.delete(Role.user(userId)),
+      ]
+    );
+  } catch (err: any) {
+    if (err?.code !== 409) throw err;
+    return await databases.getDocument(
+      process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
+      'profiles',
+      userId
+    );
+  }
+}
+
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -63,29 +107,7 @@ export default function RegisterPage() {
       const userId = newUser.$id;
 
       try {
-        await databases.createDocument(
-          process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
-          'profiles',
-          userId,
-          {
-            email,
-            displayName: name || email,
-            targetExams: JSON.stringify([]),
-            totalMarksEarned: 0,
-            totalQuestionsAttempted: 0,
-            totalCorrect: 0,
-            totalWrong: 0,
-            totalSkipped: 0,
-            rapidFireUnlockedTier: 1,
-            streakDays: 0,
-            profileCompletePct: 0,
-          },
-          [
-            Permission.read(Role.user(userId)),
-            Permission.update(Role.user(userId)),
-            Permission.delete(Role.user(userId)),
-          ]
-        );
+        await getOrCreateProfile(userId, { email, name });
       } catch (profileErr) {
         console.error('Register: profile create error', profileErr);
       }
@@ -139,6 +161,7 @@ export default function RegisterPage() {
             <Input
               type="password"
               placeholder="At least 6 characters"
+              autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
