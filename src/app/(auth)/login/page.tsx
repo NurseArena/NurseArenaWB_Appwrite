@@ -74,10 +74,17 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
     try {
-      try { await account.deleteSession('current'); } catch {}
+      try {
+        await account.get();
+        await account.deleteSession('current');
+      } catch { /* no active session — proceed */ }
       await account.createEmailPasswordSession(email, password);
       const user = await account.get();
       const userId = user.$id;
+
+      // Mirror session to cookie so middleware can read it
+      const session = await account.getSession('current');
+      document.cookie = `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID}=${session.secret}; path=/; SameSite=Lax`;
 
       const profile: any = await getOrCreateProfile(userId, user);
       if (!profile) {
@@ -101,7 +108,6 @@ export default function LoginPage() {
       } else {
         router.push('/dashboard');
       }
-      router.refresh();
     } catch (err: any) {
       console.error('Login: caught error', err);
       setError(err?.message ?? 'Invalid email or password');

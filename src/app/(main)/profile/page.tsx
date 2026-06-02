@@ -65,8 +65,9 @@ export default function ProfilePage() {
     try {
       await account.deleteSession('current');
     } catch { /* ignore network errors */ }
+    document.cookie = `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
     useAuthStore.getState().setUser(null);
-    router.push('/');
+    router.push('/login');
   };
 
   return (

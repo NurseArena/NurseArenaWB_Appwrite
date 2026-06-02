@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { account, databases } from '@/lib/appwrite/client';
+import { Permission, Role } from 'appwrite';
 import { useAuthStore } from '@/store/authStore';
 import { useExamStore } from '@/store/examStore';
 import { Button } from '@/components/ui/button';
@@ -98,26 +99,65 @@ export default function OnboardingPage() {
         : targetExams;
 
       if (userId) {
-        const { error: upsertError } = await databases.updateDocument(
-          process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
-          'profiles',
-          userId,
-          {
-            displayName,
-            photoURL: photoURL || null,
-            targetExams: JSON.stringify(finalExams),
-            jemasSubCourse: targetExams.includes('JEMAS') ? jemasSubCourse : '',
-            currentStage,
-            district,
-            institution: institution || '',
-            profileCompletePct: 100,
+        try {
+          await databases.updateDocument(
+            process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
+            'profiles',
+            userId,
+            {
+              displayName,
+              photoURL: photoURL || null,
+              targetExams: JSON.stringify(finalExams),
+              jemasSubCourse: targetExams.includes('JEMAS') ? jemasSubCourse : '',
+              currentStage,
+              district,
+              institution: institution || '',
+              profileCompletePct: 100,
+            }
+          );
+        } catch (upsertErr: any) {
+          if (upsertErr?.code === 404) {
+            try {
+              await databases.createDocument(
+                process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
+                'profiles',
+                userId,
+                {
+                  email: '',
+                  displayName,
+                  photoURL: photoURL || null,
+                  targetExams: JSON.stringify(finalExams),
+                  jemasSubCourse: targetExams.includes('JEMAS') ? jemasSubCourse : '',
+                  currentStage,
+                  district,
+                  institution: institution || '',
+                  profileCompletePct: 100,
+                  totalMarksEarned: 0,
+                  totalQuestionsAttempted: 0,
+                  totalCorrect: 0,
+                  totalWrong: 0,
+                  totalSkipped: 0,
+                  rapidFireUnlockedTier: 1,
+                  streakDays: 0,
+                },
+                [
+                  Permission.read(Role.user(userId)),
+                  Permission.update(Role.user(userId)),
+                  Permission.delete(Role.user(userId)),
+                ]
+              );
+            } catch (createErr: any) {
+              if (createErr?.code !== 409) {
+                console.error('Onboarding create failed:', createErr);
+                setLoading(false);
+                return;
+              }
+            }
+          } else {
+            console.error('Onboarding upsert failed:', upsertErr);
+            setLoading(false);
+            return;
           }
-        ).catch(e => ({ error: e }));
-
-        if (upsertError) {
-          console.error('Onboarding upsert failed:', upsertError);
-          setLoading(false);
-          return;
         }
 
         const storeUser = useAuthStore.getState().user;

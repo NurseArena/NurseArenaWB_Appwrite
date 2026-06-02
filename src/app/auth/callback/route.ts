@@ -22,31 +22,43 @@ export async function GET(request: Request) {
         'profiles',
         userId
       );
-    } catch {
-      profile = null;
+    } catch (err: any) {
+      if (err?.code !== 404) {
+        return NextResponse.redirect(new URL('/login?error=profile_fetch_failed', origin));
+      }
     }
 
     if (!profile) {
-      await databases.createDocument(
-        process.env.APPWRITE_DATABASE_ID!,
-        'profiles',
-        userId,
-        {
-          email: user.email ?? '',
-          displayName: user.name ?? user.email?.split('@')[0] ?? 'Student',
-          targetExams: JSON.stringify([]),
-          totalMarksEarned: 0,
-          totalQuestionsAttempted: 0,
-          totalCorrect: 0,
-          totalWrong: 0,
-          totalSkipped: 0,
-          rapidFireUnlockedTier: 1,
-          streakDays: 0,
-          profileCompletePct: 0,
+      try {
+        profile = await databases.createDocument(
+          process.env.APPWRITE_DATABASE_ID!,
+          'profiles',
+          userId,
+          {
+            email: user.email ?? '',
+            displayName: user.name ?? user.email?.split('@')[0] ?? 'Student',
+            targetExams: JSON.stringify([]),
+            totalMarksEarned: 0,
+            totalQuestionsAttempted: 0,
+            totalCorrect: 0,
+            totalWrong: 0,
+            totalSkipped: 0,
+            rapidFireUnlockedTier: 1,
+            streakDays: 0,
+            profileCompletePct: 0,
+          }
+        );
+      } catch (createErr: any) {
+        if (createErr?.code === 409) {
+          profile = await databases.getDocument(
+            process.env.APPWRITE_DATABASE_ID!,
+            'profiles',
+            userId
+          );
+        } else {
+          return NextResponse.redirect(new URL('/login?error=profile_create_failed', origin));
         }
-      );
-
-      return NextResponse.redirect(new URL('/onboarding', origin));
+      }
     }
 
     const targetExams = typeof profile.targetExams === 'string'
