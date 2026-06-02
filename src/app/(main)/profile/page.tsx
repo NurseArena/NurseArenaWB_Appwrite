@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useAuthStore, normalizeProfile } from '@/store/authStore';
 import { useRouter } from 'next/navigation';
@@ -23,10 +23,13 @@ export default function ProfilePage() {
   const { theme, toggleTheme } = useTheme();
   const router = useRouter();
   const { marks, xp, currentTier } = useXP();
+  const fetched = useRef(false);
 
   const user = fetchedUser ?? storeUser;
 
   useEffect(() => {
+    if (fetched.current) return;
+    fetched.current = true;
     (async () => {
       try {
         const authUser = await account.get();
@@ -37,7 +40,6 @@ export default function ProfilePage() {
           authUser.$id
         );
         if (profile) {
-          console.log('Profile fetched:', profile);
           const normalized = normalizeProfile(profile);
           setFetchedUser(normalized);
           setUser(normalized);
@@ -46,7 +48,7 @@ export default function ProfilePage() {
         // Not logged in
       }
     })();
-  }, [storeUser, setUser]);
+  }, []);
 
   const totalCorrect = user?.totalCorrect ?? 0;
   const totalWrong = user?.totalWrong ?? 0;
@@ -66,7 +68,7 @@ export default function ProfilePage() {
       await account.deleteSession('current');
     } catch { /* ignore network errors */ }
     document.cookie = `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-    useAuthStore.getState().setUser(null);
+    useAuthStore.getState().clear();
     router.push('/login');
   };
 
