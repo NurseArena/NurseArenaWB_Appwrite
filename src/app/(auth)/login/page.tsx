@@ -1,7 +1,6 @@
 'use client';
 import { useState } from 'react';
 import { account, databases } from '@/lib/appwrite/client';
-import { ID } from 'appwrite';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,6 +28,7 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
     try {
+      try { await account.deleteSession('current'); } catch {}
       await account.createEmailPasswordSession(email, password);
       const user = await account.get();
       const userId = user.$id;

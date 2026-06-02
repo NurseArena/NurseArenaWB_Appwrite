@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { account, databases } from '@/lib/appwrite/client';
 import { ID } from 'appwrite';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,6 @@ import { Mail } from 'lucide-react';
 import { LogoIcon } from '@/components/LogoIcon';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/store/authStore';
 
 const ALLOWED_DOMAINS = [
   'gmail.com', 'googlemail.com', 'hotmail.com', 'hotmail.in', 'hotmail.co.uk',
@@ -31,21 +30,6 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const [confirmed, setConfirmed] = useState(false);
   const router = useRouter();
-  const user = useAuthStore((s) => s.user);
-
-  useEffect(() => {
-    if (user) {
-      const targetExams = (user.targetExams ?? []) as string[];
-      const isOnboarded = targetExams.length > 0;
-      if (user.isAdmin) {
-        router.push('/admin');
-      } else if (!isOnboarded) {
-        router.push('/onboarding');
-      } else {
-        router.push('/dashboard');
-      }
-    }
-  }, [user, router]);
 
   const handleEmailRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +43,6 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       const newUser = await account.create(ID.unique(), email, password, name);
-      await account.createEmailPasswordSession(email, password);
       const userId = newUser.$id;
 
       try {
@@ -83,13 +66,13 @@ export default function RegisterPage() {
         );
       } catch (profileErr) {
         console.error('Register: profile create error', profileErr);
-        setError('Failed to create profile. Please try again.');
-        setLoading(false);
-        return;
       }
 
+      const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+      await account.createVerification(`${origin}/verify`);
+
       setLoading(false);
-      router.push('/onboarding');
+      setConfirmed(true);
     } catch (err: any) {
       if (err?.type === 'user_already_exists') {
         setError('An account with this email already exists.');

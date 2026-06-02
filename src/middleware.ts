@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const isPublic = ['/', '/login', '/register', '/onboarding'].some(p => pathname === p || pathname.startsWith(p + '/') || (p === '/' && pathname === '/'));
+  const isPublic = ['/', '/login', '/register', '/onboarding', '/verify'].some(p => pathname === p || pathname.startsWith(p + '/') || (p === '/' && pathname === '/'));
 
   const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID;
   if (!projectId) {
