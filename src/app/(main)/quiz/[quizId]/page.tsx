@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuiz } from '@/hooks/useQuiz';
 import { QuizCard } from '@/components/quiz/QuizCard';
@@ -26,24 +26,19 @@ export default function QuizSessionPage() {
     skipped,
     negativePenalty,
     timeRemaining,
-    timePerQuestion,
     startQuiz,
-    startTimer,
     submitAnswer,
     nextQuestion,
   } = useQuiz();
 
+  const quizStarted = useRef(false);
+
   useEffect(() => {
-    if (params.quizId && typeof params.quizId === 'string') {
+    if (params.quizId && typeof params.quizId === 'string' && !quizStarted.current) {
+      quizStarted.current = true;
       startQuiz(params.quizId);
     }
   }, [params.quizId, startQuiz]);
-
-  useEffect(() => {
-    if (state === 'active' && questions.length > 0) {
-      startTimer(timePerQuestion);
-    }
-  }, [state, questions.length, startTimer, timePerQuestion]);
 
   const answered = currentQuestion ? answers[currentQuestion.id] : undefined;
   const accuracy = Object.keys(answers).length > 0

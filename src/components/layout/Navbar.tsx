@@ -47,7 +47,7 @@ export function Navbar() {
         // notifications collection may not exist or no permission — silently ignore
       }
     })();
-  }, []);
+  }, [user?.id]);
 
   const unreadCount = notifications.filter(
     (n) => !(n.readBy ?? []).includes(user?.id ?? '')

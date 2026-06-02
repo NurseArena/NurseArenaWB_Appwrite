@@ -11,8 +11,21 @@ import type { QuestionWithStatus, ScoringProfile } from '@/types/quiz';
 const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
 
 export function useQuiz() {
-  const store = useQuizStore();
   const user = useAuthStore((s) => s.user);
+
+  // Stable action selectors — these never change between renders
+  const setState = useQuizStore((s) => s.setState);
+  const setTimeRemaining = useQuizStore((s) => s.setTimeRemaining);
+  const setQuestions = useQuizStore((s) => s.setQuestions);
+  const setCurrentIndex = useQuizStore((s) => s.setCurrentIndex);
+  const setStartTime = useQuizStore((s) => s.setStartTime);
+  const setQuestionStartTime = useQuizStore((s) => s.setQuestionStartTime);
+  const setTimePerQuestion = useQuizStore((s) => s.setTimePerQuestion);
+  const setPerQuestionSeconds = useQuizStore((s) => s.setPerQuestionSeconds);
+  const addAnswer = useQuizStore((s) => s.addAnswer);
+  const setMarksData = useQuizStore((s) => s.setMarksData);
+  const reset = useQuizStore((s) => s.reset);
+
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const perQuestionTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hasSubmittedRef = useRef(false);
@@ -35,53 +48,53 @@ export function useQuiz() {
 
   const startTimer = useCallback((duration: number) => {
     clearTimer();
-    store.setTimeRemaining(duration);
+    setTimeRemaining(duration);
     timerRef.current = setInterval(() => {
       const current = useQuizStore.getState().timeRemaining;
       if (current <= 1) {
         clearTimer();
-        store.setTimeRemaining(0);
-        store.setState('finished');
+        setTimeRemaining(0);
+        setState('finished');
         return;
       }
-      store.setTimeRemaining(current - 1);
+      setTimeRemaining(current - 1);
     }, 1000);
-  }, [clearTimer, store]);
+  }, [clearTimer, setTimeRemaining, setState]);
 
   const startPerQuestionTimerRef = useRef<((seconds: number) => void) | null>(null);
 
   useEffect(() => {
     startPerQuestionTimerRef.current = (seconds: number) => {
-      store.setTimeRemaining(seconds);
-      store.setQuestionStartTime(Date.now());
+      setTimeRemaining(seconds);
+      setQuestionStartTime(Date.now());
       perQuestionTimerRef.current = setInterval(() => {
         const current = useQuizStore.getState().timeRemaining;
         if (current <= 1) {
           clearTimer();
-          store.setTimeRemaining(0);
+          setTimeRemaining(0);
           const { questions, currentIndex } = useQuizStore.getState();
           if (currentIndex < questions.length - 1) {
-            store.setCurrentIndex(currentIndex + 1);
-            store.setTimeRemaining(seconds);
-            store.setQuestionStartTime(Date.now());
+            setCurrentIndex(currentIndex + 1);
+            setTimeRemaining(seconds);
+            setQuestionStartTime(Date.now());
             startPerQuestionTimerRef.current?.(seconds);
           } else {
-            store.setState('finished');
+            setState('finished');
           }
           return;
         }
-        store.setTimeRemaining(current - 1);
+        setTimeRemaining(current - 1);
       }, 1000);
     };
-  }, [clearTimer, store]);
+  }, [clearTimer, setTimeRemaining, setQuestionStartTime, setCurrentIndex, setState]);
 
   const startQuiz = useCallback(async (quizId: string, subjectId?: string) => {
-    store.reset();
+    reset();
     responsesRef.current = [];
     scoringProfileRef.current = null;
     sessionIdRef.current = null;
     hasSubmittedRef.current = false;
-    store.setState('loading');
+    setState('loading');
     try {
       const { documents: quizzes } = await databases.listDocuments(
         DB_ID,
@@ -139,7 +152,7 @@ export function useQuiz() {
       }
 
       if (!rawQuestions.length) {
-        store.setState('idle');
+        setState('idle');
         return;
       }
 
@@ -167,12 +180,12 @@ export function useQuiz() {
       const perQuestionSeconds = quiz?.per_question_seconds as number | null;
       const timePerQ = perQuestionSeconds ?? Math.max(15, Math.floor(totalDuration / questions.length));
 
-      store.setQuestions(questions);
-      store.setTimePerQuestion(timePerQ);
-      store.setPerQuestionSeconds(perQuestionSeconds);
-      store.setStartTime(Date.now());
-      store.setQuestionStartTime(Date.now());
-      store.setState('active');
+      setQuestions(questions);
+      setTimePerQuestion(timePerQ);
+      setPerQuestionSeconds(perQuestionSeconds);
+      setStartTime(Date.now());
+      setQuestionStartTime(Date.now());
+      setState('active');
 
       if (user) {
         const maxScore = scoringProfileRef.current
@@ -206,9 +219,9 @@ export function useQuiz() {
       }
     } catch (err) {
       console.error('Failed to start quiz:', err);
-      store.setState('idle');
+      setState('idle');
     }
-  }, [store, startTimer]);
+  }, [reset, setState, setQuestions, setTimePerQuestion, setPerQuestionSeconds, setStartTime, setQuestionStartTime, user, startTimer]);
 
   const submitAnswer = useCallback(async (selected: string | string[] | null) => {
     if (hasSubmittedRef.current) return;
@@ -227,13 +240,13 @@ export function useQuiz() {
       isCorrect = selArr?.length > 0 && !selArr.some(s => !q.correctAnswers.includes(s));
     }
 
-    store.addAnswer(q.id, { selected, isCorrect, timeMs });
+    addAnswer(q.id, { selected, isCorrect, timeMs });
     responsesRef.current.push({ selected, category: q.category });
 
     const updated = [...useQuizStore.getState().questions];
     const safeSelected = selected ?? undefined;
     updated[currentIndex] = { ...updated[currentIndex], answered: true, selected: safeSelected, isCorrect };
-    store.setQuestions(updated);
+    setQuestions(updated);
 
     if (user) {
       try {
@@ -284,20 +297,20 @@ export function useQuiz() {
               ...questionsWithExplanation[currentIndex],
               explanation: (questionDoc as any).explanation,
             };
-            store.setQuestions(questionsWithExplanation);
+            setQuestions(questionsWithExplanation);
           }
         } catch {}
       } catch {}
     }
 
     hasSubmittedRef.current = false;
-  }, [store, user]);
+  }, [user, addAnswer, setQuestions]);
 
   const nextQuestion = useCallback(() => {
     const { questions, currentIndex, perQuestionSeconds } = useQuizStore.getState();
     if (currentIndex < questions.length - 1) {
-      store.setCurrentIndex(currentIndex + 1);
-      store.setQuestionStartTime(Date.now());
+      setCurrentIndex(currentIndex + 1);
+      setQuestionStartTime(Date.now());
       hasSubmittedRef.current = false;
 
       if (perQuestionSeconds) {
@@ -311,10 +324,10 @@ export function useQuiz() {
         return { selected: a?.selected ?? null, category: q.category };
       });
       const marksData = calculateMarksV2(respItems, catQ);
-      store.setMarksData(marksData);
+      setMarksData(marksData);
 
       if (sessionIdRef.current) {
-        const { marksEarned, correct, wrong, skipped } = marksData;
+        const { marksEarned, correct, wrong } = marksData;
         databases.updateDocument(DB_ID, 'quiz_sessions', sessionIdRef.current, {
           submittedAt: new Date().toISOString(),
           status: 'submitted',
@@ -325,9 +338,9 @@ export function useQuiz() {
         }).then(() => {}, () => {});
       }
 
-      store.setState('finished');
+      setState('finished');
     }
-  }, [store]);
+  }, [setCurrentIndex, setQuestionStartTime, setMarksData, setState]);
 
   const finishQuiz = useCallback(async () => {
     clearTimer();
@@ -338,7 +351,7 @@ export function useQuiz() {
       return { selected: a?.selected ?? null, category: q.category };
     });
     const marksData = calculateMarksV2(respItems, catQ);
-    store.setMarksData(marksData);
+    setMarksData(marksData);
 
     if (sessionIdRef.current) {
       await databases.updateDocument(DB_ID, 'quiz_sessions', sessionIdRef.current, {
@@ -351,7 +364,7 @@ export function useQuiz() {
       });
     }
 
-    store.setState('finished');
+    setState('finished');
 
     if (user) {
       try {
@@ -374,7 +387,7 @@ export function useQuiz() {
         }
       } catch {}
     }
-  }, [clearTimer, store, user]);
+  }, [clearTimer, user, setMarksData, setState]);
 
   useEffect(() => {
     return () => {
@@ -383,8 +396,29 @@ export function useQuiz() {
     };
   }, [clearTimer]);
 
+  // Read reactive state values individually so the hook re-renders only when they change
+  const state = useQuizStore((s) => s.state);
+  const questions = useQuizStore((s) => s.questions);
+  const currentIndex = useQuizStore((s) => s.currentIndex);
+  const timeRemaining = useQuizStore((s) => s.timeRemaining);
+  const timePerQuestion = useQuizStore((s) => s.timePerQuestion);
+  const answers = useQuizStore((s) => s.answers);
+  const startTime = useQuizStore((s) => s.startTime);
+  const perQuestionSeconds = useQuizStore((s) => s.perQuestionSeconds);
+  const marksEarned = useQuizStore((s) => s.marksEarned);
+  const totalMarks = useQuizStore((s) => s.totalMarks);
+
   return {
-    ...store,
+    state,
+    questions,
+    currentIndex,
+    timeRemaining,
+    timePerQuestion,
+    answers,
+    startTime,
+    perQuestionSeconds,
+    marksEarned,
+    totalMarks,
     startQuiz,
     startTimer,
     submitAnswer,
@@ -392,6 +426,6 @@ export function useQuiz() {
     finishQuiz,
     scoringProfile,
     sessionId,
-    currentQuestion: store.questions[store.currentIndex],
+    currentQuestion: questions[currentIndex],
   };
 }

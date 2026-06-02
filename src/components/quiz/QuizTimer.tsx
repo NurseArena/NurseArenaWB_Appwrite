@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
 
 interface QuizTimerProps {
@@ -12,6 +12,9 @@ export function QuizTimer({ timeRemaining, duration, onTimeUp }: QuizTimerProps)
   const [pulseTick, setPulseTick] = useState(0);
   const percentage = (timeRemaining / duration) * 100;
   const isLow = timeRemaining <= 10;
+  const onTimeUpRef = useRef(onTimeUp);
+
+  useEffect(() => { onTimeUpRef.current = onTimeUp; }, [onTimeUp]);
 
   useEffect(() => {
     if (!isLow) return;
@@ -20,8 +23,8 @@ export function QuizTimer({ timeRemaining, duration, onTimeUp }: QuizTimerProps)
   }, [isLow]);
 
   useEffect(() => {
-    if (timeRemaining <= 0 && onTimeUp) onTimeUp();
-  }, [timeRemaining, onTimeUp]);
+    if (timeRemaining <= 0) onTimeUpRef.current?.();
+  }, [timeRemaining]);
 
   const pulse = isLow && pulseTick % 2 === 1;
 
