@@ -129,9 +129,8 @@ export default function RapidFirePage() {
       } catch {}
     }
 
-    const { documents: raw } = await databases.listDocuments(DB_ID, 'questions', [
+    const { documents: raw } = await databases.listDocuments(DB_ID, 'rapid_fire_questions', [
       Query.equal('exam_code', activeExam),
-      Query.equal('archived', [false, null] as any),
       Query.limit(200),
     ]);
 

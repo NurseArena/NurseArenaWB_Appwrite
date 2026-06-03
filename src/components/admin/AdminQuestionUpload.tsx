@@ -14,7 +14,7 @@ async function contentHash(text: string): Promise<string> {
 import { Card } from '@/components/ui/card';
 import { Upload, FileSpreadsheet, AlertCircle, CheckCircle2 } from 'lucide-react';
 
-export type QuestionCategory = 'general' | 'subject' | 'topic' | 'pyq' | 'rapid_fire';
+export type QuestionCategory = 'general' | 'subject' | 'topic' | 'practice' | 'pyq' | 'rapid_fire';
 
 interface UploadRow {
   rowIndex: number;
@@ -45,6 +45,13 @@ const CATEGORY_META: Record<QuestionCategory, { label: string; required: string[
     csvHeader: 'question_text,option_a,option_b,option_c,option_d,correct_option,topic,explanation,difficulty,subject_name,exam_id',
     description: 'question_text, option_a-d, correct_option, topic (required), explanation, difficulty, subject_name, exam_id',
   },
+  practice: {
+    label: 'Practice',
+    required: ['question_text', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_option', 'subject_name'],
+    optional: ['explanation', 'difficulty', 'topic', 'exam_id'],
+    csvHeader: 'question_text,option_a,option_b,option_c,option_d,correct_option,subject_name,explanation,difficulty,topic,exam_id',
+    description: 'question_text, option_a-d, correct_option, subject_name (required), explanation, difficulty, topic, exam_id',
+  },
   pyq: {
     label: 'PYQs',
     required: ['question_text', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_option', 'pyq_year'],
@@ -59,6 +66,15 @@ const CATEGORY_META: Record<QuestionCategory, { label: string; required: string[
     csvHeader: 'question_text,option_a,option_b,option_c,option_d,correct_option,explanation,difficulty,subject_name,exam_id,topic',
     description: 'question_text, option_a-d, correct_option, explanation, difficulty, subject_name, exam_id, topic',
   },
+};
+
+const COLLECTION_MAP: Record<QuestionCategory, string> = {
+  general: 'questions',
+  subject: 'questions',
+  topic: 'questions',
+  practice: 'practice_questions',
+  pyq: 'pyq_questions',
+  rapid_fire: 'rapid_fire_questions',
 };
 
 const COURSE_OPTIONS = [
@@ -145,6 +161,7 @@ export function AdminQuestionUpload({ defaultCategory = 'general' }: { defaultCa
     setResult(null);
     try {
       const validRows = rows.filter(r => r.valid);
+      const targetCollection = COLLECTION_MAP[category];
       let success = 0;
       let failed = 0;
       for (const row of validRows) {
@@ -159,15 +176,23 @@ export function AdminQuestionUpload({ defaultCategory = 'general' }: { defaultCa
           explanation: row.data.explanation ?? '',
           difficulty: row.data.difficulty ?? 'medium',
           topic: row.data.topic ?? '',
-          archived: false,
-          is_pyq: category === 'pyq',
-          pyq_year: category === 'pyq' ? (row.data.pyq_year ?? null) : null,
           subject_name: row.data.subject_name ?? null,
         };
-        const hashInput = `${course}|${row.data.question_text}|${row.data.option_a}|${row.data.option_b}|${row.data.option_c}|${row.data.option_d}`;
-        insertData.content_hash = await contentHash(hashInput);
+
+        if (targetCollection === 'questions') {
+          insertData.archived = false;
+          insertData.is_pyq = false;
+          insertData.pyq_year = null;
+          const hashInput = `${course}|${row.data.question_text}|${row.data.option_a}|${row.data.option_b}|${row.data.option_c}|${row.data.option_d}`;
+          insertData.content_hash = await contentHash(hashInput);
+        }
+
+        if (targetCollection === 'pyq_questions') {
+          insertData.pyq_year = row.data.pyq_year ? parseInt(row.data.pyq_year) : null;
+        }
+
         try {
-          await databases.createDocument(DB_ID, 'questions', ID.unique(), insertData);
+          await databases.createDocument(DB_ID, targetCollection, ID.unique(), insertData);
           success++;
         } catch {
           failed++;

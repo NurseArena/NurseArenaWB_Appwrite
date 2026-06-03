@@ -19,8 +19,7 @@ export default function PYQPage() {
     let cancelled = false;
     (async () => {
       try {
-        const { documents } = await databases.listDocuments(DB_ID, 'questions', [
-          Query.equal('is_pyq', true),
+        const { documents } = await databases.listDocuments(DB_ID, 'pyq_questions', [
           Query.isNotNull('pyq_year'),
           Query.limit(1000),
         ]);

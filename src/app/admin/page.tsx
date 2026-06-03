@@ -48,7 +48,7 @@ export default function AdminDashboard() {
   }, []);
 
   const links = [
-    { icon: Upload, label: 'Upload Questions', href: '/admin/questions', desc: 'One-click CSV/Excel upload' },
+    { icon: Upload, label: 'Upload Questions', href: '/admin/questions', desc: 'CSV upload — routes to dedicated collection per type (PYQ, Practice, Rapid Fire, Quiz)' },
     { icon: BookOpen, label: 'Question Bank', href: '/admin/questions/bank', desc: 'Browse, edit, add single question' },
     { icon: CalendarDays, label: 'Quiz Management', href: '/admin/quizzes', desc: 'Create quizzes, weekly mock settings' },
     { icon: GitBranch, label: 'Exam Mapping', href: '/admin/exam-mapping', desc: 'View/Edit Exam → Subject → Topic tree' },

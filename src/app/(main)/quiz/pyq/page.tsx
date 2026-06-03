@@ -61,13 +61,11 @@ function PYQContent() {
 
         const queries = [
           Query.equal('exam_code', activeExam),
-          Query.equal('is_pyq', true),
-          Query.equal('archived', [false, null] as any),
           Query.limit(100),
         ];
         if (year) queries.push(Query.equal('pyq_year', parseInt(year)));
 
-        const { documents: raw } = await databases.listDocuments(DB_ID, 'questions', queries);
+        const { documents: raw } = await databases.listDocuments(DB_ID, 'pyq_questions', queries);
         if (cancelled) return;
 
         let pool = (raw as Record<string, unknown>[]).filter((rq) => !attemptedIds.includes(rq.$id as string));

@@ -31,6 +31,7 @@ function PracticeContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const subject = searchParams.get('subject');
+  const topic = searchParams.get('topic');
   const { activeExam } = useExam();
   const user = useAuthStore((s) => s.user);
 
@@ -61,12 +62,12 @@ function PracticeContent() {
 
         const queries: any[] = [
           Query.equal('exam_code', activeExam),
-          Query.equal('archived', [false, null] as any),
-          Query.limit(100),
+          Query.limit(200),
         ];
         if (subject) queries.push(Query.equal('subject_name', subject));
+        if (topic) queries.push(Query.equal('topic', topic));
 
-        const { documents: raw } = await databases.listDocuments(DB_ID, 'questions', queries);
+        const { documents: raw } = await databases.listDocuments(DB_ID, 'practice_questions', queries);
         if (cancelled) return;
 
         let pool = (raw as Record<string, unknown>[]).filter((rq) => !attemptedIds.includes(rq.$id as string));
@@ -93,7 +94,7 @@ function PracticeContent() {
       }
     })();
     return () => { cancelled = true; };
-  }, [activeExam, subject, user]);
+  }, [activeExam, subject, topic, user]);
 
   const handleAnswer = useCallback((selected: string) => {
     if (!q || answered) return;
@@ -166,7 +167,7 @@ function PracticeContent() {
   if (!q) {
     return (
       <div className="text-center py-20">
-        <p className="text-ink-muted italic">No questions found for {subject}.</p>
+        <p className="text-ink-muted italic">No questions found for {topic ?? subject}.</p>
         <Button variant="ghost" onClick={() => router.push('/subjects')} className="mt-4">
           Back to Subjects
         </Button>
@@ -177,7 +178,7 @@ function PracticeContent() {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl mx-auto space-y-4">
       <div className="flex items-center justify-between text-sm text-ink-muted">
-        <span>{subject} · {currentIndex + 1}/{questions.length}</span>
+        <span>{topic ?? subject} · {currentIndex + 1}/{questions.length}</span>
         <span className="flex items-center gap-1"><CheckCircle2 size={14} className="text-success" /> {correctCount}</span>
       </div>
 

@@ -91,14 +91,19 @@ export default function AdminTopicsPage() {
     const sourceName = (sourceTopic?.name ?? '') as string;
     const targetName = (targetTopic?.name ?? '') as string;
     if (!sourceName || !targetName) return;
-    const { documents: questions } = await databases.listDocuments(
-      DB_ID,
-      'questions',
-      [Query.equal('topic', sourceName), Query.limit(5000)]
-    );
-    for (const q of questions as any[]) {
-      await databases.updateDocument(DB_ID, 'questions', q.$id, { topic: targetName });
-    }
+    const updateTopicOnCollection = async (collection: string) => {
+      try {
+        const { documents: docs } = await databases.listDocuments(DB_ID, collection, [
+          Query.equal('topic', sourceName),
+          Query.limit(5000),
+        ]);
+        for (const d of docs as any[]) {
+          await databases.updateDocument(DB_ID, collection, d.$id, { topic: targetName });
+        }
+      } catch { /* collection may not exist */ }
+    };
+    await updateTopicOnCollection('questions');
+    await updateTopicOnCollection('practice_questions');
     await databases.deleteDocument(DB_ID, 'topics', mergeSourceId);
     setStatus('Topics merged successfully');
     setMergeSourceId('');
