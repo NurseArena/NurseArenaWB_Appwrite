@@ -58,6 +58,7 @@ export default function AdminDashboard() {
     { icon: Bell, label: 'Notifications', href: '/admin/notifications', desc: 'Send to all / by exam / single user' },
     { icon: Layers, label: 'Topics', href: '/admin/topics', desc: 'Manage subject → topic hierarchy' },
     { icon: FileText, label: 'Mock Tests', href: '/admin/mock-tests', desc: 'Create and publish mock tests' },
+    { icon: Upload, label: 'Mock Test CSV Upload', href: '/admin/mock-tests/upload', desc: 'Upload 100 questions via CSV for a mock test' },
   ];
 
   const poolColor = (available: number) => {

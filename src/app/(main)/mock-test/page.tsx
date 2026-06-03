@@ -3,10 +3,12 @@ import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useExam } from '@/hooks/useExam';
 import { Card } from '@/components/ui/card';
-import { Clock, ListChecks, Swords, CalendarDays } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Clock, ListChecks, Swords, CalendarDays, Play } from 'lucide-react';
 import { EXAMS } from '@/lib/exam-config';
 import { databases } from '@/lib/appwrite/client';
 import { Query } from 'appwrite';
+import Link from 'next/link';
 
 const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
 import { useState } from 'react';
@@ -14,21 +16,20 @@ import { useState } from 'react';
 export default function MockTestPage() {
   const { examName, activeExam } = useExam();
   const config = EXAMS[activeExam];
-  const [quizzes, setQuizzes] = useState<Record<string, unknown>[]>([]);
+  const [mockTests, setMockTests] = useState<Record<string, unknown>[]>([]);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const { documents } = await databases.listDocuments(DB_ID, 'quizzes', [
+        const { documents } = await databases.listDocuments(DB_ID, 'mock_tests', [
           Query.equal('exam_code', activeExam),
-          Query.orderDesc('$createdAt'),
-          Query.limit(20),
+          Query.equal('status', 'published'),
+          Query.orderDesc('serial_number'),
+          Query.limit(50),
         ]);
-        if (!cancelled && documents) setQuizzes(documents as Record<string, unknown>[]);
-      } catch {
-        // quizzes collection may not exist
-      }
+        if (!cancelled && documents) setMockTests(documents as Record<string, unknown>[]);
+      } catch {}
     })();
     return () => { cancelled = true; };
   }, [activeExam]);
@@ -88,21 +89,28 @@ export default function MockTestPage() {
       <div>
         <h2 className="text-xl font-bold text-ink mb-4 flex items-center gap-2">
           <CalendarDays size={20} />
-          Available Tests
+          Available Mock Tests
         </h2>
-        {quizzes.length === 0 ? (
-          <p className="text-sm text-ink-muted">No mock tests available yet. Weekly mocks are uploaded every Monday.</p>
+        {mockTests.length === 0 ? (
+          <Card className="p-8 text-center">
+            <p className="text-ink-muted italic">No mock tests available yet for {examName}.</p>
+          </Card>
         ) : (
           <div className="space-y-3">
-            {quizzes.map((q: Record<string, unknown>) => (
-              <Card key={String(q.id)} className="p-4">
+            {mockTests.map((mt) => (
+              <Card key={mt.$id as string} className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-bold text-ink">{String(q.title)}</p>
+                    <p className="font-bold text-ink">{mt.title as string}</p>
                     <p className="text-xs text-ink-muted">
-                      {q.type === 'weekly_mock' ? 'Auto-generated weekly mock' : 'Practice test'}
+                      {Math.round(Number(mt.duration_seconds ?? 0) / 60)} min · 100 questions
                     </p>
                   </div>
+                  <Link href={`/mock-test/${mt.$id}`}>
+                    <Button size="sm">
+                      <Play size={16} /> Start
+                    </Button>
+                  </Link>
                 </div>
               </Card>
             ))}

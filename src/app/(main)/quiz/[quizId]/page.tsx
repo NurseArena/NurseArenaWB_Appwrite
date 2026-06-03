@@ -26,6 +26,7 @@ export default function QuizSessionPage() {
     skipped,
     negativePenalty,
     timeRemaining,
+    timePerQuestion,
     startQuiz,
     submitAnswer,
     nextQuestion,

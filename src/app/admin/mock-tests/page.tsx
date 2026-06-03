@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus } from 'lucide-react';
+import { Plus, Upload } from 'lucide-react';
+import Link from 'next/link';
 
 const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
 
@@ -77,7 +78,12 @@ export default function AdminMockTestsPage() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 max-w-3xl">
-      <h1 className="text-3xl font-bold text-ink">Mock Tests</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold text-ink">Mock Tests</h1>
+        <Link href="/admin/mock-tests/upload">
+          <Button><Upload size={16} /> Upload CSV</Button>
+        </Link>
+      </div>
 
       <Card className="p-6 space-y-4">
         <h2 className="font-semibold text-lg">Create New Mock Test</h2>

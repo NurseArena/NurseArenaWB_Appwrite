@@ -109,6 +109,17 @@ export function useQuiz() {
         setScoringProfile(sp);
       }
 
+      let attemptedIds: string[] = [];
+      if (user) {
+        try {
+          const { documents: attempts } = await databases.listDocuments(DB_ID, 'attempts', [
+            Query.equal('userId', user.id),
+            Query.limit(5000),
+          ]);
+          attemptedIds = [...new Set((attempts as any[]).map((a) => a.questionId).filter(Boolean))];
+        } catch {}
+      }
+
       let rawQuestions: Record<string, unknown>[] = [];
 
       const { documents: quizQuestions } = await databases.listDocuments(
@@ -137,7 +148,7 @@ export function useQuiz() {
 
       if (!rawQuestions.length) {
         const count = (quiz?.question_count as number) || 10;
-        const queries = [Query.equal('archived', [false, null] as any), Query.limit(count)];
+        const queries = [Query.equal('archived', [false, null] as any), Query.limit(Math.max(count * 3, 100))];
         if (quiz?.exam_code) queries.push(Query.equal('exam_code', quiz.exam_code as string));
         if (quiz?.subject_name) queries.push(Query.equal('subject_name', quiz.subject_name as string));
         const { documents: randomQ } = await databases.listDocuments(
@@ -146,7 +157,9 @@ export function useQuiz() {
           queries
         );
         if (randomQ?.length) {
-          const shuffled = [...randomQ].sort(() => Math.random() - 0.5);
+          const pool = (randomQ as Record<string, unknown>[]).filter((rq) => !attemptedIds.includes(rq.$id as string));
+          const source = pool.length >= count ? pool : (randomQ as Record<string, unknown>[]);
+          const shuffled = [...source].sort(() => Math.random() - 0.5);
           rawQuestions = shuffled.slice(0, count) as Record<string, unknown>[];
         }
       }
@@ -407,6 +420,10 @@ export function useQuiz() {
   const perQuestionSeconds = useQuizStore((s) => s.perQuestionSeconds);
   const marksEarned = useQuizStore((s) => s.marksEarned);
   const totalMarks = useQuizStore((s) => s.totalMarks);
+  const storeCorrect = useQuizStore((s) => s.correct);
+  const storeWrong = useQuizStore((s) => s.wrong);
+  const storeSkipped = useQuizStore((s) => s.skipped);
+  const storeNegativePenalty = useQuizStore((s) => s.negativePenalty);
 
   return {
     state,
@@ -419,6 +436,10 @@ export function useQuiz() {
     perQuestionSeconds,
     marksEarned,
     totalMarks,
+    correct: storeCorrect,
+    wrong: storeWrong,
+    skipped: storeSkipped,
+    negativePenalty: storeNegativePenalty,
     startQuiz,
     startTimer,
     submitAnswer,

@@ -86,6 +86,19 @@ Create these in Appwrite Cloud Console (all lowercase camelCase attribute names)
 | timeTakenMs | number | Response time |
 | answeredAt | string | ISO datetime |
 
+### `mock_test_questions` — Mock test questions (NOT pooled from question bank)
+| Attribute | Type | Notes |
+|-----------|------|-------|
+| mock_test_id | string | Reference to mock_tests document ID |
+| question | string | Question text |
+| option_a | string | Option A |
+| option_b | string | Option B |
+| option_c | string | Option C |
+| option_d | string | Option D |
+| correct | string | A/B/C/D |
+| explanation | string | Explanation |
+| order_index | number | Question order |
+
 ### Other collections
 - `attempts` — Granular per-question history
 - `quizzes` — Quiz definitions
@@ -117,6 +130,27 @@ If profile fetch fails (e.g. collection/attribute mismatch), the Zustand store f
 ### 6. Admin auth check
 API routes use `requireAuth` / `getCurrentUser` from cookie, then verify `is_admin` on the profile document.
 
+### 7. Mock test questions stored in `mock_test_questions` collection
+NOT in the `questions` collection. Admin uploads CSV via `/admin/mock-tests/upload` and questions go to `mock_test_questions` with `mock_test_id` reference. The user Facing mock test page at `/mock-test` fetches from `mock_tests` where `status='published'` matching the user's active exam.
+
+### 8. No question repetition across modes
+All quiz modes (quiz, PYQ, topic-wise practice, rapid fire) check the `attempts` collection for the user's previously attempted question IDs and exclude them from the pool. If insufficient unseen questions remain, it falls back to the full pool.
+
+### 9. Scoring by mode
+- **Mock test**: 1 mark per correct, 0 for wrong/skipped (total = 100 for 100 questions)
+- **Quiz**: Configurable scoring profile (default Category I: +1/-0.25)
+- **Rapid Fire**: Count of correct answers (no negative marking in display)
+- **PYQ/Practice**: Count of correct answers out of 10
+
+### 10. CSV format for mock test upload
+```csv
+question,option_a,option_b,option_c,option_d,correct,explanation
+What is the normal pH of blood?,7.35,7.45,7.0,7.5,A,The normal pH range of blood is 7.35-7.45.
+```
+- `correct` must be A/B/C/D (case-insensitive)
+- Must upload exactly 100 questions  
+- `explanation` is optional
+
 ## Dev Commands
 ```bash
 npm run dev       # start dev server (pnpm dev)
@@ -147,13 +181,18 @@ src/
     (main)/quiz/[quizId]/page.tsx — Active quiz session
     (main)/quiz/result/page.tsx   — Quiz results
     (main)/rapid-fire/page.tsx    — Rapid fire mode
-    (main)/mock-test/page.tsx     — Mock tests
+    (main)/mock-test/page.tsx     — Mock tests list
+    (main)/mock-test/[mockTestId]/ — Mock test taking (90 min, 100 marks, navigation, submit & review)
+    (main)/mock-test/result/     — Mock test result with full answer review
+    (main)/quiz/pyq/             — PYQ quiz (10 questions, filter attempted, instant reveal)
+    (main)/quiz/practice/        — Topic-wise practice (10 questions, filter attempted, instant reveal)
     (main)/live-quiz/page.tsx     — Live quizzes
     (main)/leaderboard/page.tsx   — Rankings
     (main)/analytics/page.tsx     — Performance analytics
     (main)/pyq/page.tsx           — Previous year questions
     (main)/profile/page.tsx       — User profile
     (main)/exam-select/page.tsx   — Switch active exam
+    admin/mock-tests/upload/      — Mock test CSV upload (100 questions, auto-numbered)
     admin/                        — Admin panel
     api/                          — API routes
     layout.tsx                    — Root layout
@@ -185,7 +224,8 @@ src/
     scoring.ts                    — Scoring profile logic
     utils.ts                      — Utility functions
     validate-env.ts               — Env validation
-  services/                       — Data access layer
+  services/
+    mockTestQuestions.ts          — Mock test question CRUD, auto-numbering
   store/                          — Zustand stores
   types/                          — TypeScript types
 ```

@@ -161,4 +161,43 @@ export interface MockTestAttempt {
   rank?: number;
 }
 
+export interface MockTestQuestion {
+  $id?: string;
+  id: string;
+  mock_test_id: string;
+  question: string;
+  option_a: string;
+  option_b: string;
+  option_c: string;
+  option_d: string;
+  correct: string;
+  explanation?: string;
+  order_index: number;
+}
+
+export interface MockTestTakingState {
+  state: 'idle' | 'loading' | 'active' | 'reviewing' | 'finished';
+  questions: MockTestQuestionWithStatus[];
+  currentIndex: number;
+  startTime: number;
+  timeRemaining: number;
+  answers: Record<string, { selected: string; isCorrect: boolean; timeMs: number }>;
+  score: number;
+  correct: number;
+  wrong: number;
+  skipped: number;
+}
+
+export interface MockTestQuestionWithStatus {
+  id: string;
+  question: string;
+  options: { label: string; text: string }[];
+  correct: string;
+  explanation?: string;
+  order_index: number;
+  answered?: boolean;
+  selected?: string;
+  isCorrect?: boolean;
+}
+
 export type { Question } from './exam';
