@@ -87,6 +87,38 @@ const COURSE_OPTIONS = [
   { value: 'JEMAS', label: 'JEMAS (PG)' },
 ];
 
+function parseCSVLine(line: string): string[] {
+  const result: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (i + 1 < line.length && line[i + 1] === '"') {
+          current += '"';
+          i++;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        current += ch;
+      }
+    } else {
+      if (ch === '"') {
+        inQuotes = true;
+      } else if (ch === ',') {
+        result.push(current);
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+  }
+  result.push(current);
+  return result;
+}
+
 export function AdminQuestionUpload({ defaultCategory = 'general' }: { defaultCategory?: QuestionCategory }) {
   const [category, setCategory] = useState<QuestionCategory>(defaultCategory);
   const [course, setCourse] = useState('');
@@ -100,12 +132,12 @@ export function AdminQuestionUpload({ defaultCategory = 'general' }: { defaultCa
   const parseCSV = useCallback((text: string) => {
     const lines = text.split('\n').filter(l => l.trim());
     if (lines.length < 2) return;
-    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+    const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
     const requiredLower = meta.required.map(r => r.toLowerCase());
     const parsed: UploadRow[] = [];
     let errorCount = 0;
     for (let i = 1; i < lines.length; i++) {
-      const vals = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+      const vals = parseCSVLine(lines[i]).map(v => v.trim());
       const row: Record<string, string> = {};
       headers.forEach((h, idx) => { row[h] = vals[idx] ?? ''; });
       const errors: string[] = [];
