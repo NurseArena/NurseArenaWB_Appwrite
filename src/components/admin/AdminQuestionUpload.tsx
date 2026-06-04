@@ -206,10 +206,13 @@ export function AdminQuestionUpload({ defaultCategory = 'general' }: { defaultCa
           option_d: row.data.option_d,
           correct: row.data.correct_option.toUpperCase(),
           explanation: row.data.explanation ?? '',
-          difficulty: row.data.difficulty ?? 'medium',
-          topic: row.data.topic ?? '',
-          subject_name: row.data.subject_name ?? null,
         };
+
+        if (targetCollection !== 'rapid_fire_questions') {
+          insertData.difficulty = row.data.difficulty ?? 'medium';
+          insertData.topic = row.data.topic ?? '';
+          insertData.subject_name = row.data.subject_name ?? null;
+        }
 
         if (targetCollection === 'questions') {
           insertData.archived = false;
