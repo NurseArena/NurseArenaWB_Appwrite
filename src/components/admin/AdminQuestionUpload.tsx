@@ -147,7 +147,7 @@ export function AdminQuestionUpload({ defaultCategory = 'general' }: { defaultCa
       if (row.correct_option && !['a', 'b', 'c', 'd'].includes(row.correct_option.toLowerCase())) {
         errors.push('correct_option must be a/b/c/d');
       }
-      if (row.difficulty && !['easy', 'medium', 'hard'].includes(row.difficulty)) {
+      if (row.difficulty && !['easy', 'medium', 'hard'].includes(row.difficulty.toLowerCase())) {
         errors.push('difficulty must be easy/medium/hard');
       }
       if (category === 'pyq' && row.pyq_year && !/^\d{4}$/.test(row.pyq_year)) {

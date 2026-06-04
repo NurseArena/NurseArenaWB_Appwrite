@@ -74,8 +74,8 @@ export async function validateQuestionRow(row: Record<string, unknown>) {
   if (!row.correct_answer || !['a', 'b', 'c', 'd'].includes(String(row.correct_answer).toLowerCase())) {
     errors.push('correct_answer must be a/b/c/d');
   }
-  if (row.difficulty && !['Easy', 'Medium', 'Hard'].includes(String(row.difficulty))) {
-    errors.push('difficulty must be Easy/Medium/Hard');
+  if (row.difficulty && !['easy', 'medium', 'hard'].includes(String(row.difficulty).toLowerCase())) {
+    errors.push('difficulty must be easy/medium/hard');
   }
   if (!row.exam_code) errors.push('exam_code is required');
   return errors;
