@@ -25,19 +25,18 @@ export default function AdminDashboard() {
         );
         if (cancelled) return;
 
-        const counts = new Map<string, { available: number; reserved: number; used: number }>();
-        for (const q of questions as unknown as { exam_code: string; quiz_pool_status: string }[]) {
+        const counts = new Map<string, { total: number }>();
+        for (const q of questions as unknown as { exam_code: string; archived?: boolean }[]) {
+          if (q.archived) continue;
           const code = q.exam_code ?? 'UNKNOWN';
           let entry = counts.get(code);
-          if (!entry) { entry = { available: 0, reserved: 0, used: 0 }; counts.set(code, entry); }
-          if (q.quiz_pool_status === 'available') entry.available++;
-          else if (q.quiz_pool_status === 'reserved') entry.reserved++;
-          else if (q.quiz_pool_status === 'used') entry.used++;
+          if (!entry) { entry = { total: 0 }; counts.set(code, entry); }
+          entry.total++;
         }
 
         const map: Record<string, { available: number; reserved: number; used: number; quizzes_possible: number }> = {};
         for (const [code, c] of counts) {
-          map[code] = { ...c, quizzes_possible: Math.floor(c.available / QUIZ_REQUIRED) };
+          map[code] = { available: c.total, reserved: 0, used: 0, quizzes_possible: Math.floor(c.total / QUIZ_REQUIRED) };
         }
         if (!cancelled) setPoolData(map);
       } catch {

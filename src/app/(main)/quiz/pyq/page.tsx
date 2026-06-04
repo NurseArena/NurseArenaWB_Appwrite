@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useCallback, Suspense } from 'react';
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { databases } from '@/lib/appwrite/client';
@@ -38,6 +38,7 @@ function PYQContent() {
   const [questions, setQuestions] = useState<PQQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, PQAnswer>>({});
+  const questionStartRef = useRef(0);
 
   const q = questions[currentIndex];
   const answered = q ? answers[q.id] : undefined;
@@ -55,7 +56,7 @@ function PYQContent() {
               Query.equal('userId', user.id),
               Query.limit(5000),
             ]);
-            attemptedIds = (attempts as any[]).map((a) => a.questionId).filter(Boolean);
+            attemptedIds = [...new Set((attempts as any[]).map((a) => a.questionId).filter(Boolean))];
           } catch {}
         }
 
@@ -86,9 +87,12 @@ function PYQContent() {
           topic: rq.topic as string,
         }));
         setQuestions(mapped);
+        questionStartRef.current = Date.now();
         setPhase('active');
       } catch {
-        setPhase('loading');
+        console.error('Failed to load PYQ questions');
+        setPhase('active');
+        setQuestions([]);
       }
     })();
     return () => { cancelled = true; };
@@ -104,7 +108,7 @@ function PYQContent() {
         questionId: q.id,
         selectedOption: selected,
         isCorrect,
-        timeTakenMs: 0,
+        timeTakenMs: Date.now() - questionStartRef.current,
       }).catch(() => {});
     }
   }, [q, answered, user]);
@@ -223,7 +227,7 @@ function PYQContent() {
       </AnimatePresence>
 
       {answered && (
-        <Button className="w-full" onClick={() => currentIndex < questions.length - 1 ? setCurrentIndex((i) => i + 1) : setPhase('result')}>
+        <Button className="w-full" onClick={() => { questionStartRef.current = Date.now(); currentIndex < questions.length - 1 ? setCurrentIndex((i) => i + 1) : setPhase('result'); }}>
           {currentIndex < questions.length - 1 ? <><ArrowRight size={18} /> Next Question</> : 'See Results'}
         </Button>
       )}

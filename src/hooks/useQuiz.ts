@@ -148,7 +148,7 @@ export function useQuiz() {
 
       if (!rawQuestions.length) {
         const count = (quiz?.question_count as number) || 10;
-        const queries = [Query.equal('archived', [false, null] as any), Query.limit(Math.max(count * 3, 100))];
+        const queries = [Query.notEqual('archived', true), Query.limit(Math.max(count * 3, 100))];
         if (quiz?.exam_code) queries.push(Query.equal('exam_code', quiz.exam_code as string));
         if (quiz?.subject_name) queries.push(Query.equal('subject_name', quiz.subject_name as string));
         const { documents: randomQ } = await databases.listDocuments(
@@ -246,11 +246,30 @@ export function useQuiz() {
     const timeMs = Date.now() - (questionStartTime || useQuizStore.getState().startTime);
 
     let isCorrect = false;
+    let marksAwarded: number | undefined;
     if (q.category === 'I') {
       isCorrect = selected === q.correctAnswers[0];
+      if (scoringProfileRef.current) {
+        marksAwarded = calculateScoring(isCorrect, scoringProfileRef.current);
+      } else {
+        marksAwarded = isCorrect ? 1.0 : -0.25;
+      }
     } else if (q.category === 'II') {
-      const selArr = selected as string[];
-      isCorrect = selArr?.length > 0 && !selArr.some(s => !q.correctAnswers.includes(s));
+      const selArr = selected as string[] | null;
+      if (!selArr || selArr.length === 0) {
+        isCorrect = false;
+        marksAwarded = 0;
+      } else {
+        const hasWrong = selArr.some(s => !q.correctAnswers.includes(s));
+        if (hasWrong) {
+          isCorrect = false;
+          marksAwarded = -0.25;
+        } else {
+          const partialRatio = selArr.length / q.correctAnswers.length;
+          marksAwarded = 2 * partialRatio;
+          isCorrect = partialRatio > 0;
+        }
+      }
     }
 
     addAnswer(q.id, { selected, isCorrect, timeMs });
@@ -263,12 +282,6 @@ export function useQuiz() {
 
     if (user) {
       try {
-        let marksAwarded: number | undefined;
-        if (scoringProfileRef.current) {
-          marksAwarded = calculateScoring(isCorrect, scoringProfileRef.current);
-        } else {
-          marksAwarded = isCorrect ? 1.0 : -0.25;
-        }
 
         await databases.createDocument(
           DB_ID,

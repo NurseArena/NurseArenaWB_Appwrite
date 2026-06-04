@@ -69,22 +69,23 @@ async function createCollection(collectionId, name, attrs) {
 async function main() {
   console.log("Creating mapped question collections...\n");
 
-  // 1. pyq_questions — dedicated PYQ question bank (9 attributes)
+  // 1. pyq_questions — dedicated PYQ question bank (10 attributes)
   await createCollection("pyq_questions", "pyq_questions", [
-    { type: "String",  key: "exam_code",   size: 50,   required: true },
-    { type: "String",  key: "question",     size: 5000, required: true },
-    { type: "String",  key: "option_a",     size: 1000, required: true },
-    { type: "String",  key: "option_b",     size: 1000, required: true },
-    { type: "String",  key: "option_c",     size: 1000, required: true },
-    { type: "String",  key: "option_d",     size: 1000, required: true },
-    { type: "String",  key: "correct",      size: 5,    required: true },
-    { type: "String",  key: "explanation",  size: 5000, required: false, default: "" },
-    { type: "Integer", key: "pyq_year",     required: false },
+    { type: "String",  key: "exam_code",     size: 50,   required: true },
+    { type: "String",  key: "question",       size: 5000, required: true },
+    { type: "String",  key: "option_a",       size: 1000, required: true },
+    { type: "String",  key: "option_b",       size: 1000, required: true },
+    { type: "String",  key: "option_c",       size: 1000, required: true },
+    { type: "String",  key: "option_d",       size: 1000, required: true },
+    { type: "String",  key: "correct",        size: 5,    required: true },
+    { type: "String",  key: "explanation",    size: 5000, required: false, default: "" },
+    { type: "Integer", key: "pyq_year",       required: false },
+    { type: "String",  key: "difficulty",     size: 10,   required: false, default: "medium" },
   ]);
 
   console.log("\n");
 
-  // 2. practice_questions — dedicated topic-wise practice bank (10 attributes)
+  // 2. practice_questions — dedicated topic-wise practice bank (11 attributes)
   await createCollection("practice_questions", "practice_questions", [
     { type: "String",  key: "exam_code",     size: 50,   required: true },
     { type: "String",  key: "question",       size: 5000, required: true },
@@ -96,6 +97,7 @@ async function main() {
     { type: "String",  key: "subject_name",   size: 100,  required: false, default: "" },
     { type: "String",  key: "topic",          size: 100,  required: false, default: "" },
     { type: "String",  key: "explanation",    size: 5000, required: false, default: "" },
+    { type: "String",  key: "difficulty",     size: 10,   required: false, default: "medium" },
   ]);
 
   console.log("\n");

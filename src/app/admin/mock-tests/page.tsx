@@ -42,7 +42,7 @@ export default function AdminMockTestsPage() {
   const handleCreate = async () => {
     setStatus('');
     try {
-      const { error } = await databases.createDocument(
+      await databases.createDocument(
         DB_ID,
         'mock_tests',
         ID.unique(),
@@ -51,10 +51,11 @@ export default function AdminMockTestsPage() {
           title: title || `Mock Test ${serialNumber}`,
           serial_number: parseInt(serialNumber),
           duration_seconds: parseInt(durationMins) * 60,
+          status: 'draft',
         }
-      ).catch(e => ({ error: e }));
+      );
 
-      setStatus(`Mock Test created!`);
+      setStatus('Mock Test created!');
       setTitle('');
       setSerialNumber('');
       setRefreshKey(k => k + 1);

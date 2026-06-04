@@ -123,7 +123,7 @@ export default function MockTestTakingPage() {
     const correct = Object.values(currentAnswers).filter((a) => a.isCorrect).length;
     const wrong = Object.values(currentAnswers).filter((a) => !a.isCorrect).length;
     const skipped = total - correct - wrong;
-    const score = Math.round((correct * 1 + wrong * -0.5) * 100) / 100;
+    const score = Math.round((correct * 1 + wrong * -0.25) * 100) / 100;
     const sid = sessionIdRef.current;
 
     if (sid && user) {
@@ -138,16 +138,18 @@ export default function MockTestTakingPage() {
             attemptedCount: correct + wrong,
           });
 
-          for (const [qId, ans] of Object.entries(currentAnswers)) {
+          for (const qu of currentQuestions) {
+            const qId = qu.$id ?? qu.id;
+            const ans = currentAnswers[qId];
             await databases.createDocument(DB_ID, 'session_answers', ID.unique(), {
               sessionId: sid,
               userId: user.id,
               questionId: qId,
-              orderIndex: currentQuestions.findIndex((q) => (q.$id ?? q.id) === qId),
-              selectedOption: ans.selected,
-              isCorrect: ans.isCorrect,
-              marksAwarded: ans.isCorrect ? 1 : 0,
-              timeTakenMs: ans.timeMs,
+              orderIndex: qu.order_index,
+              selectedOption: ans?.selected ?? null,
+              isCorrect: ans?.isCorrect ?? false,
+              marksAwarded: ans?.isCorrect ? 1 : 0,
+              timeTakenMs: ans?.timeMs ?? 0,
               answeredAt: new Date().toISOString(),
             });
           }
@@ -189,7 +191,7 @@ export default function MockTestTakingPage() {
   const handleAnswer = useCallback((option: string) => {
     if (!q || answered) return;
     const isCorrect = option.toUpperCase() === (q.correct ?? '').toUpperCase();
-    setAnswers((prev) => ({ ...prev, [q.$id ?? q.id]: { selected: option, isCorrect, timeMs: 0 } }));
+    setAnswers((prev) => ({ ...prev, [q.$id ?? q.id]: { selected: option, isCorrect, timeMs: Date.now() - startTimeRef.current } }));
   }, [q, answered]);
 
   const mins = Math.floor(timeRemaining / 60);

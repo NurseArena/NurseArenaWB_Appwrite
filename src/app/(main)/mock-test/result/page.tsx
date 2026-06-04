@@ -119,7 +119,7 @@ function ResultContent() {
       <Card className="p-6">
         <div className="text-center mb-4">
           <p className="text-5xl font-bold text-ink">{percentage}%</p>
-          <p className="text-sm text-ink-muted mt-1">Scoring: +1 correct / −0.5 wrong</p>
+          <p className="text-sm text-ink-muted mt-1">Scoring: +1 correct / −0.25 wrong</p>
         </div>
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
@@ -145,7 +145,7 @@ function ResultContent() {
           </div>
         </div>
         <div className="mt-3 text-center text-xs text-ink-muted">
-          Score = {correct}×1 + {wrong}×(−0.5) = <span className="font-bold text-ink">{score}</span>
+          Score = {correct}×1 + {wrong}×(−0.25) = <span className="font-bold text-ink">{score}</span>
         </div>
       </Card>
 

@@ -2,10 +2,19 @@ import { databases } from '@/lib/appwrite/client';
 import { Query, ID } from 'appwrite';
 import type { Question } from '@/types/exam';
 import type { AdminStats } from '@/types/leaderboard';
+import { useAuthStore } from '@/store/authStore';
 
 const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
 
+function requireAdmin() {
+  const user = useAuthStore.getState().user;
+  if (!user || !('is_admin' in user) || !(user as any).is_admin) {
+    throw new Error('Unauthorized: admin access required');
+  }
+}
+
 export async function bulkUploadQuestions(questions: Omit<Question, 'id' | 'created_at' | 'createdAt'>[]) {
+  requireAdmin();
   const uploaded: Question[] = [];
   const skipped: { row: Omit<Question, 'id' | 'created_at' | 'createdAt'>; reason: string }[] = [];
   const failed: { row: Omit<Question, 'id' | 'created_at' | 'createdAt'>; reason: string }[] = [];
@@ -32,6 +41,7 @@ export async function bulkUploadQuestions(questions: Omit<Question, 'id' | 'crea
 }
 
 export async function fetchDuplicateQuestions(examCode?: string) {
+  requireAdmin();
   const queries = [
     Query.isNotNull('content_hash'),
     Query.limit(5000),
@@ -82,6 +92,7 @@ export async function validateQuestionRow(row: Record<string, unknown>) {
 }
 
 export async function createQuestion(question: Omit<Question, 'id' | 'created_at' | 'createdAt'>) {
+  requireAdmin();
   const data = await databases.createDocument(
     DB_ID,
     'questions',
@@ -92,6 +103,7 @@ export async function createQuestion(question: Omit<Question, 'id' | 'created_at
 }
 
 export async function updateQuestion(id: string, updates: Partial<Question>) {
+  requireAdmin();
   const data = await databases.updateDocument(
     DB_ID,
     'questions',
@@ -102,6 +114,7 @@ export async function updateQuestion(id: string, updates: Partial<Question>) {
 }
 
 export async function softDeleteQuestion(id: string) {
+  requireAdmin();
   await databases.updateDocument(
     DB_ID,
     'questions',
@@ -111,8 +124,9 @@ export async function softDeleteQuestion(id: string) {
 }
 
 export async function fetchQuestionsAdmin(filters?: { exam_code?: string; difficulty?: string; search?: string }, limit = 50, offset = 0) {
+  requireAdmin();
   const queries = [
-    Query.equal('archived', [false, null] as any),
+    Query.notEqual('archived', true),
     Query.limit(limit),
     Query.offset(offset),
   ];
@@ -132,6 +146,7 @@ export async function fetchQuestionsAdmin(filters?: { exam_code?: string; diffic
 }
 
 export async function fetchAdminStats(): Promise<AdminStats> {
+  requireAdmin();
   const { documents: users } = await databases.listDocuments(
     DB_ID,
     'profiles',

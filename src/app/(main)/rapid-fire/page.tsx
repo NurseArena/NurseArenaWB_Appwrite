@@ -39,6 +39,7 @@ export default function RapidFirePage() {
   const user = useAuthStore((s) => s.user);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const autoAdvanceRef = useRef<NodeJS.Timeout | null>(null);
+  const questionStartRef = useRef(0);
 
   const q = questions[currentIndex];
   const answered = q ? answers[q.id] : undefined;
@@ -53,6 +54,7 @@ export default function RapidFirePage() {
 
   const advanceToNext = useCallback(() => {
     setShowExplanation(false);
+    questionStartRef.current = Date.now();
     if (currentIndex < questions.length - 1) {
       setCurrentIndex((i) => i + 1);
     } else {
@@ -73,7 +75,7 @@ export default function RapidFirePage() {
         questionId: q.id,
         selectedOption: selected,
         isCorrect,
-        timeTakenMs: 0,
+        timeTakenMs: Date.now() - questionStartRef.current,
       }).catch(() => {});
     }
 

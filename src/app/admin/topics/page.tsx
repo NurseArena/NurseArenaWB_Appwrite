@@ -63,19 +63,23 @@ export default function AdminTopicsPage() {
   const handleAddTopic = async () => {
     if (!newTopicName.trim() || !selectedSubject) return;
     setStatus('');
-    const { error } = await databases.createDocument(
-      DB_ID,
-      'topics',
-      ID.unique(),
-      {
-        subject_id: selectedSubject,
-        name: newTopicName.trim(),
-      }
-    ).catch(e => ({ error: e }));
+    try {
+      await databases.createDocument(
+        DB_ID,
+        'topics',
+        ID.unique(),
+        {
+          subject_id: selectedSubject,
+          name: newTopicName.trim(),
+        }
+      );
 
-    setStatus(`Topic "${newTopicName}" created`);
-    setNewTopicName('');
-    setRefreshKey(k => k + 1);
+      setStatus(`Topic "${newTopicName}" created`);
+      setNewTopicName('');
+      setRefreshKey(k => k + 1);
+    } catch (err: unknown) {
+      setStatus(`Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    }
   };
 
   const handleDeleteTopic = async (id: string) => {

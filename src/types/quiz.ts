@@ -106,42 +106,40 @@ export interface ScoringProfile {
 
 export interface QuizSessionRecord {
   id: string;
-  quiz_id: string;
-  user_id: string;
-  started_at: string;
-  submitted_at?: string;
-  time_taken_ms?: number;
-  total_questions: number;
-  attempted_count: number;
-  correct_count: number;
-  wrong_count: number;
+  quizId: string;
+  userId: string;
+  startedAt: string;
+  submittedAt?: string;
+  timeTakenMs?: number;
+  totalQuestions: number;
+  attemptedCount: number;
+  correctCount: number;
+  wrongCount: number;
   score: number;
-  max_score: number;
+  maxScore: number;
   status: 'in_progress' | 'submitted' | 'abandoned';
   quiz?: Quiz;
 }
 
 export interface SessionAnswerRecord {
   id: string;
-  session_id: string;
-  question_id: string;
-  order_index: number;
-  selected_option?: string;
-  is_correct?: boolean;
-  marks_awarded?: number;
-  time_taken_ms?: number;
-  flagged: boolean;
-  answered_at?: string;
+  sessionId: string;
+  questionId: string;
+  orderIndex: number;
+  selectedOption?: string;
+  isCorrect?: boolean;
+  marksAwarded?: number;
+  timeTakenMs?: number;
+  answeredAt?: string;
   question?: QuestionWithStatus;
 }
 
 export interface MockTest {
   id: string;
-  exam_id: string;
+  exam_code: string;
   title: string;
   serial_number: number;
   duration_seconds: number;
-  scoring_profile_id: string;
   status: 'draft' | 'published' | 'archived';
   published_at?: string;
   created_by?: string;
@@ -151,19 +149,19 @@ export interface MockTest {
 export interface MockTestAttempt {
   id: string;
   mock_test_id: string;
-  user_id: string;
-  session_id: string;
-  started_at: string;
-  submitted_at?: string;
+  userId: string;
+  sessionId: string;
+  startedAt: string;
+  submittedAt?: string;
   score?: number;
-  correct_count?: number;
-  wrong_count?: number;
+  correctCount?: number;
+  wrongCount?: number;
   rank?: number;
 }
 
 export interface MockTestQuestion {
   $id?: string;
-  id: string;
+  id?: string;
   mock_test_id: string;
   question: string;
   option_a: string;
