@@ -46,7 +46,7 @@ export default function RapidFirePage() {
   const answered = q ? answers[q.id] : undefined;
   const correctCount = Object.values(answers).filter((a) => a.isCorrect).length;
   const wrongCount = Object.values(answers).filter((a) => !a.isCorrect).length;
-  const skippedCount = currentIndex - correctCount - wrongCount;
+  const skippedCount = Math.max(0, questions.length - correctCount - wrongCount);
 
   const clearTimers = useCallback(() => {
     if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }

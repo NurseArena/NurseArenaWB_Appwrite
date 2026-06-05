@@ -35,16 +35,17 @@ export default function LeaderboardPage() {
     (async () => {
       try {
         const examId = config?.code;
-        const { documents } = await databases.listDocuments(DB_ID, 'leaderboard', [
+        const queries = [
           ...(examId ? [Query.equal('exam_id', examId)] : []),
           Query.orderDesc('marksEarned'),
           Query.limit(50),
-        ]);
+        ];
+        const { documents } = await databases.listDocuments(DB_ID, 'leaderboard', queries);
         if (!cancelled && documents) {
           const mapped: LeaderboardRow[] = documents.map((entry: Record<string, unknown>, i: number) => ({
             rank: i + 1,
             userId: entry.userId as string ?? entry.user_id as string,
-            name: (entry.displayName as string) ?? 'Anonymous',
+            name: (entry.displayName as string) || 'Anonymous',
             avatar: entry.photoURL as string | undefined,
             marksEarned: (entry.marksEarned as number) ?? 0,
             percentage: (entry.percentage as number) ?? 0,
@@ -54,8 +55,33 @@ export default function LeaderboardPage() {
           }));
           setRows(mapped);
         }
-      } catch {
-        // leaderboard collection may not exist
+      } catch (err) {
+        console.error('Leaderboard fetch failed (try creating composite index: exam_id + marksEarned desc):', err);
+        // fallback: fetch without sorting if index missing
+        try {
+          const examId = config?.code;
+          const { documents } = await databases.listDocuments(DB_ID, 'leaderboard', [
+            ...(examId ? [Query.equal('exam_id', examId)] : []),
+            Query.limit(50),
+          ]);
+          if (!cancelled && documents) {
+            const sorted = documents.sort((a, b) => (b.marksEarned as number ?? 0) - (a.marksEarned as number ?? 0));
+            const mapped: LeaderboardRow[] = sorted.map((entry: Record<string, unknown>, i: number) => ({
+              rank: i + 1,
+              userId: entry.userId as string ?? entry.user_id as string,
+              name: (entry.displayName as string) || 'Anonymous',
+              avatar: entry.photoURL as string | undefined,
+              marksEarned: (entry.marksEarned as number) ?? 0,
+              percentage: (entry.percentage as number) ?? 0,
+              wrong: (entry.wrong as number) ?? 0,
+              totalMarksEarned: (entry.totalMarksEarned as number) ?? (entry.marksEarned as number) ?? 0,
+              isCurrentUser: (entry.userId as string ?? entry.user_id as string) === user?.id,
+            }));
+            setRows(mapped);
+          }
+        } catch (fallbackErr) {
+          console.error('Leaderboard fallback fetch also failed:', fallbackErr);
+        }
       }
     })();
     return () => { cancelled = true; };
