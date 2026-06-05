@@ -4,6 +4,7 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import { account, databases } from '@/lib/appwrite/client';
 import { useAuthStore } from '@/store/authStore';
 import { useExamStore } from '@/store/examStore';
+import { checkAndUpdateStreak } from '@/services/profiles';
 import type { Profile } from '@/types/user';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -42,6 +43,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setActiveExam(targetExams[0] as never);
           }
           setUser(profile);
+
+          checkAndUpdateStreak(authUser.$id).then((updated) => {
+            if (updated) {
+              setUser({ ...profile, ...updated });
+            }
+          });
         } else {
           setUser({
             id: authUser.$id,

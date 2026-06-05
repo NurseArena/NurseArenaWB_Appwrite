@@ -1,0 +1,921 @@
+JEPBN MOCK TEST – 2 (100 QUESTIONS) | CLOSE OPTIONS & VARIATIONS
+
+PART A – BASIC SCIENCES (40 QUESTIONS)
+
+ANATOMY (4)
+1. Topic: Anatomy – Eye
+Question: Which structure directly regulates the amount of light entering the eye?
+(A) Cornea
+(B) Lens
+(C) Pupil
+(D) Iris
+Correct Answer: D
+Explanation: The iris contains smooth muscle that contracts (parasympathetic) to constrict the pupil and dilates (sympathetic) to widen it. The pupil itself is the opening, not the regulator.
+
+2. Topic: Anatomy – Middle ear
+Question: The ossicle that transmits vibrations to the oval window is the:
+(A) Malleus
+(B) Incus
+(C) Stapes
+(D) Hyoid
+Correct Answer: C
+Explanation: The stapes footplate fits into the oval window, transmitting mechanical energy to the cochlear fluid.
+
+3. Topic: Anatomy – Brain
+Question: Which lobe of the brain is primarily associated with auditory processing and memory?
+(A) Frontal
+(B) Temporal
+(C) Parietal
+(D) Occipital
+Correct Answer: B
+Explanation: The temporal lobe houses the primary auditory cortex (Heschl's gyrus) and the hippocampus (memory).
+
+4. Topic: Anatomy – Heart
+Question: The coronary arteries originate from:
+(A) Pulmonary trunk
+(B) Ascending aorta
+(C) Left ventricle
+(D) Superior vena cava
+Correct Answer: B
+Explanation: The right and left coronary arteries arise from the sinuses of Valsalva in the ascending aorta just above the aortic valve.
+
+PHYSIOLOGY (5)
+5. Topic: Physiology – Blood pressure
+Question: Which of the following hormones directly causes vasoconstriction and increased blood pressure?
+(A) Atrial natriuretic peptide
+(B) Bradykinin
+(C) Angiotensin II
+(D) Prostacyclin
+Correct Answer: C
+Explanation: Angiotensin II is a potent vasoconstrictor and stimulates aldosterone release, raising BP. ANP and bradykinin cause vasodilation.
+
+6. Topic: Physiology – Respiration
+Question: The majority of carbon dioxide is transported in the blood as:
+(A) Dissolved CO2
+(B) Carbaminohemoglobin
+(C) Bicarbonate ions (HCO3-)
+(D) Carbonic acid
+Correct Answer: C
+Explanation: About 70% of CO2 is transported as bicarbonate (formed in RBCs via carbonic anhydrase). Only 7% is dissolved, and 23% as carbaminohemoglobin.
+
+7. Topic: Physiology – Renal
+Question: Which part of the nephron is primarily impermeable to water in the absence of ADH?
+(A) Proximal convoluted tubule
+(B) Descending loop of Henle
+(C) Ascending loop of Henle
+(D) Collecting duct
+Correct Answer: D
+Explanation: The collecting duct is water‑impermeable without ADH; ADH inserts aquaporin‑2 channels to allow water reabsorption.
+
+8. Topic: Physiology – Endocrine
+Question: Which hormone is secreted in response to low blood calcium?
+(A) Calcitonin
+(B) Parathyroid hormone (PTH)
+(C) Thyroid hormone
+(D) Aldosterone
+Correct Answer: B
+Explanation: PTH increases serum calcium by bone resorption, renal reabsorption, and calcitriol activation. Calcitonin lowers calcium.
+
+9. Topic: Physiology – Muscle contraction
+Question: During isometric contraction, muscle length:
+(A) Shortens
+(B) Lengthens
+(C) Remains constant while tension increases
+(D) Oscillates
+Correct Answer: C
+Explanation: Isometric: tension increases but muscle length does not change (e.g., holding a weight steady). Isotonic: length changes.
+
+SOCIOLOGY (3)
+10. Topic: Sociology – Social institutions
+Question: The family is considered a primary group because it is characterized by:
+(A) Large size and impersonal relationships
+(B) Goal‑oriented and temporary interactions
+(C) Intimate, face‑to‑face, and enduring relationships
+(D) Formal rules and contractual obligations
+Correct Answer: C
+Explanation: Primary groups (family, close friends) have intimate, long‑term, emotional bonds. Secondary groups are larger and impersonal.
+
+11. Topic: Sociology – Culture
+Question: The belief that one's own culture is superior to others is called:
+(A) Cultural relativism
+(B) Ethnocentrism
+(C) Cultural diffusion
+(D) Xenocentrism
+Correct Answer: B
+Explanation: Ethnocentrism judges other cultures by the standards of one's own. Cultural relativism views cultures objectively.
+
+12. Topic: Sociology – Social stratification
+Question: In a closed system of stratification, social position is determined primarily by:
+(A) Achieved status
+(B) Ascribed status (birth)
+(C) Wealth and income
+(D) Education level
+Correct Answer: B
+Explanation: Closed systems (caste, slavery) assign status at birth with little mobility. Open systems (class) allow movement.
+
+PSYCHOLOGY (4)
+13. Topic: Psychology – Memory
+Question: Forgetting that occurs because new information interferes with recall of old information is termed:
+(A) Retroactive interference
+(B) Proactive interference
+(C) Repression
+(D) Decay
+Correct Answer: A
+Explanation: Retroactive = new impairs old. Proactive = old impairs new. Repression is unconscious blocking.
+
+14. Topic: Psychology – Defense mechanisms
+Question: A person who unconsciously attributes their own unacceptable thoughts to someone else is using:
+(A) Rationalization
+(B) Displacement
+(C) Projection
+(D) Sublimation
+Correct Answer: C
+Explanation: Projection: attributing one's own feelings/impulses to another person (e.g., "He hates me" when actually "I hate him").
+
+15. Topic: Psychology – Emotion
+Question: The James‑Lange theory of emotion proposes that:
+(A) Emotion precedes physiological arousal
+(B) Physiological arousal precedes emotion
+(C) Cognitive appraisal determines emotion
+(D) Emotion and arousal occur simultaneously
+Correct Answer: B
+Explanation: James‑Lange: we feel emotion because we perceive bodily changes (e.g., we feel sad because we cry). Cannon‑Bard: simultaneous.
+
+16. Topic: Psychology – Developmental
+Question: According to Piaget, a child in the concrete operational stage (7–11 years) can:
+(A) Think abstractly and hypothetically
+(B) Use logic but only with concrete objects
+(C) Understand object permanence
+(D) Engage in egocentric thinking
+Correct Answer: B
+Explanation: Concrete operational: logical reasoning about tangible events; abstract reasoning emerges in formal operational stage.
+
+PHARMACOLOGY (7)
+17. Topic: Pharmacology – Anticoagulants
+Question: The antidote for heparin overdose is:
+(A) Vitamin K
+(B) Protamine sulfate
+(C) Naloxone
+(D) Flumazenil
+Correct Answer: B
+Explanation: Protamine sulfate is a basic protein that binds to acidic heparin, neutralizing it. Vitamin K reverses warfarin.
+
+18. Topic: Pharmacology – Antidiabetics
+Question: Which oral antidiabetic drug carries a risk of lactic acidosis, especially in renal impairment?
+(A) Metformin
+(B) Glipizide
+(C) Pioglitazone
+(D) Sitagliptin
+Correct Answer: A
+Explanation: Metformin (biguanide) can cause lactic acidosis in patients with renal failure, liver disease, or hypoxia.
+
+19. Topic: Pharmacology – Antibiotics
+Question: A patient with a penicillin allergy is most likely to also have a reaction to:
+(A) Vancomycin
+(B) Cephalosporins
+(C) Macrolides
+(D) Tetracyclines
+Correct Answer: B
+Explanation: There is about 5‑10% cross‑sensitivity between penicillins and cephalosporins due to similar beta‑lactam ring.
+
+20. Topic: Pharmacology – Antihypertensives
+Question: Which class of antihypertensive drugs is contraindicated in pregnancy because it can cause fetal renal agenesis?
+(A) Beta‑blockers
+(B) ACE inhibitors
+(C) Calcium channel blockers
+(D) Diuretics
+Correct Answer: B
+Explanation: ACE inhibitors (and ARBs) are fetotoxic, causing oligohydramnios and renal tubular dysplasia in the second/third trimester.
+
+21. Topic: Pharmacology – Local anesthetics
+Question: Epinephrine is added to local anesthetics to:
+(A) Reduce pain on injection
+(B) Increase duration of anesthesia by vasoconstriction
+(C) Prevent allergic reactions
+(D) Increase systemic absorption
+Correct Answer: B
+Explanation: Epinephrine causes vasoconstriction, slowing absorption of local anesthetic, prolonging effect, and reducing bleeding.
+
+22. Topic: Pharmacology – Antipsychotics
+Question: Which side effect of typical antipsychotics is characterized by a "rabbit syndrome" (fine, rapid perioral tremors)?
+(A) Tardive dyskinesia
+(B) Akathisia
+(C) Dystonia
+(D) Parkinsonism
+Correct Answer: D
+Explanation: Rabbit syndrome is a variant of drug‑induced parkinsonism – fine tremor of perioral muscles. Tardive dyskinesia is choreoathetoid.
+
+23. Topic: Pharmacology – Opioids
+Question: Naloxone (Narcan) reverses opioid overdose by:
+(A) Activating opioid receptors
+(B) Blocking opioid receptors as a competitive antagonist
+(C) Increasing opioid metabolism
+(D) Inhibiting opioid absorption
+Correct Answer: B
+Explanation: Naloxone is a pure competitive antagonist at mu opioid receptors, rapidly displacing opioids.
+
+MICROBIOLOGY (6)
+24. Topic: Microbiology – Sterilization
+Question: Which method is used to sterilize heat‑sensitive liquids (e.g., vaccines, serum)?
+(A) Autoclaving
+(B) Dry heat
+(C) Filtration
+(D) Boiling
+Correct Answer: C
+Explanation: Membrane filtration (0.22 micron) removes bacteria and spores without heat; used for heat‑labile solutions.
+
+25. Topic: Microbiology – Bacterial toxins
+Question: Exotoxin responsible for the characteristic "bulbar palsy" and descending paralysis in botulism is:
+(A) Tetanospasmin
+(B) Botulinum toxin
+(C) Enterotoxin
+(D) Lipopolysaccharide (endotoxin)
+Correct Answer: B
+Explanation: Botulinum toxin (from C. botulinum) blocks ACh release at neuromuscular junctions, causing flaccid paralysis.
+
+26. Topic: Microbiology – Immunity
+Question: Which type of immunity is conferred by injection of preformed antibodies (e.g., rabies immunoglobulin)?
+(A) Active natural
+(B) Active artificial
+(C) Passive natural
+(D) Passive artificial
+Correct Answer: D
+Explanation: Passive artificial immunity = injection of antibodies (human or animal) for immediate but short‑term protection.
+
+27. Topic: Microbiology – Viruses
+Question: The hepatitis virus that is a DNA virus is:
+(A) Hepatitis A
+(B) Hepatitis B
+(C) Hepatitis C
+(D) Hepatitis E
+Correct Answer: B
+Explanation: HBV is a hepadnavirus (DNA). HAV, HCV, HEV are RNA viruses.
+
+28. Topic: Microbiology – Gram staining
+Question: A Gram‑negative coccus that causes gonorrhea and appears as "kidney bean" diplococci is:
+(A) Neisseria meningitidis
+(B) Neisseria gonorrhoeae
+(C) Moraxella catarrhalis
+(D) Haemophilus influenzae
+Correct Answer: B
+Explanation: N. gonorrhoeae is Gram‑negative diplococcus, oxidase positive; N. meningitidis is similar but causes meningitis.
+
+29. Topic: Microbiology – Hospital infection
+Question: The most common source of nosocomial infection in a hospital is:
+(A) Contaminated food
+(B) Airborne dust
+(C) Patient's own endogenous flora
+(D) Unsterilized surgical instruments
+Correct Answer: C
+Explanation: Endogenous flora (patient's own skin, gut, respiratory) is the most frequent source; exogenous sources are less common.
+
+NUTRITION (4)
+30. Topic: Nutrition – Vitamins
+Question: The major storage form of vitamin A in the liver is:
+(A) Retinol
+(B) Retinal
+(C) Retinoic acid
+(D) Beta‑carotene
+Correct Answer: A
+Explanation: Vitamin A is stored as retinyl esters in hepatic stellate cells; retinol is the alcohol form used in transport.
+
+31. Topic: Nutrition – Minerals
+Question: Zinc deficiency is most commonly associated with which clinical sign?
+(A) Angular stomatitis
+(B) Parotid enlargement
+(C) Delayed wound healing and hypogeusia
+(D) Night blindness
+Correct Answer: C
+Explanation: Zinc is a cofactor for enzymes; deficiency causes impaired wound healing, altered taste (hypogeusia), and hair loss.
+
+32. Topic: Nutrition – Protein energy malnutrition
+Question: Marasmus differs from kwashiorkor in that marasmus primarily results from:
+(A) Protein deficiency with adequate calories
+(B) Calorie (energy) deficiency
+(C) Vitamin B12 deficiency
+(D) Iron deficiency
+Correct Answer: B
+Explanation: Marasmus = chronic energy deficit (wasting, no edema). Kwashiorkor = protein deficiency (edema, fatty liver).
+
+33. Topic: Nutrition – BMR
+Question: Which factor increases basal metabolic rate (BMR) the most?
+(A) Starvation
+(B) Hypothyroidism
+(C) Fever (1°C increase)
+(D) Old age
+Correct Answer: C
+Explanation: Fever raises BMR by about 13% per °C. Hyperthyroidism and pregnancy also increase; starvation decreases.
+
+PATHOLOGY (7)
+34. Topic: Pathology – Inflammation
+Question: Which of the following is a characteristic of chronic inflammation?
+(A) Neutrophils as the predominant cell
+(B) Immediate onset after injury
+(C) Formation of granulomas
+(D) Resolution within 24 hours
+Correct Answer: C
+Explanation: Chronic inflammation is prolonged, with lymphocytes, macrophages, plasma cells, and sometimes granulomas.
+
+35. Topic: Pathology – Thrombosis
+Question: The three components of Virchow's triad are:
+(A) Endothelial injury, hypercoagulability, stasis
+(B) Hypoxia, acidosis, infection
+(C) Atherosclerosis, embolus, infarction
+(D) Vasospasm, platelet plug, fibrin mesh
+Correct Answer: A
+Explanation: Virchow's triad: endothelial damage, abnormal blood flow (stasis/turbulence), and hypercoagulability.
+
+36. Topic: Pathology – Cell injury
+Question: The "point of no return" in irreversible cell injury is marked by:
+(A) Cellular swelling
+(B) Loss of membrane integrity and mitochondrial dysfunction
+(C) Fatty change
+(D) Increased protein synthesis
+Correct Answer: B
+Explanation: Irreversible injury: severe mitochondrial damage, loss of plasma membrane integrity, and nuclear changes (pyknosis, karyorrhexis, karyolysis).
+
+37. Topic: Pathology – Neoplasia
+Question: A well‑differentiated tumor that grows slowly and does not metastasize is called:
+(A) Anaplastic
+(B) Malignant
+(C) Benign
+(D) Carcinoma in situ
+Correct Answer: C
+Explanation: Benign tumors are well‑differentiated, non‑invasive, non‑metastatic; malignant tumors are poorly differentiated and invasive.
+
+38. Topic: Pathology – Edema
+Question: Cardiogenic edema is initially most evident in which body part?
+(A) Periorbital region
+(B) Dependent areas (feet/ankles)
+(C) Sacrum
+(D) Ascites
+Correct Answer: B
+Explanation: Right heart failure causes systemic venous hypertension, leading to dependent pitting edema (feet/ankles in ambulatory patients).
+
+39. Topic: Pathology – Shock
+Question: In the early stage of hypovolemic shock, the compensatory mechanism that increases heart rate and vasoconstriction is mediated by:
+(A) Parasympathetic activation
+(B) Sympathetic nervous system and catecholamines
+(C) Release of histamine
+(D) Activation of the renin‑angiotensin system only
+Correct Answer: B
+Explanation: Sympathetic activation (epinephrine, norepinephrine) increases HR, contractility, and vasoconstriction to maintain BP.
+
+40. Topic: Pathology – Healing
+Question: Which cell type is primarily responsible for wound contraction during secondary healing?
+(A) Neutrophils
+(B) Macrophages
+(C) Myofibroblasts
+(D) Endothelial cells
+Correct Answer: C
+Explanation: Myofibroblasts (modified fibroblasts) contain actin and cause wound contraction; essential in secondary intention healing.
+
+PART B – CLINICAL NURSING (60 QUESTIONS)
+
+FOUNDATIONS OF NURSING (10)
+41. Topic: Foundations – Hand hygiene
+Question: The minimum duration for hand washing with soap and water (according to WHO) is:
+(A) 10 seconds
+(B) 20 seconds
+(C) 40 seconds
+(D) 60 seconds
+Correct Answer: C
+Explanation: WHO recommends 40‑60 seconds for hand washing with soap and water; alcohol rub takes 20‑30 seconds.
+
+42. Topic: Foundations – Patient positioning
+Question: A patient with orthopnea (difficulty breathing when lying flat) should be placed in which position?
+(A) Supine
+(B) Prone
+(C) Semi‑Fowler's or high Fowler's
+(D) Left lateral
+Correct Answer: C
+Explanation: Fowler's position (head elevated 45‑90°) reduces venous return and allows diaphragm to descend, easing breathing.
+
+43. Topic: Foundations – Medication administration
+Question: When administering a subcutaneous injection of heparin, the nurse should:
+(A) Aspirate before injecting
+(B) Massage the site after injection
+(C) Use a 1‑inch needle
+(D) Not aspirate and do not massage
+Correct Answer: D
+Explanation: Heparin is given subcutaneously without aspiration (to avoid hematoma) and without massage (prevents bruising).
+
+44. Topic: Foundations – Ethics
+Question: A nurse who acts in the best interest of the patient, even if not requested by the patient, is following the principle of:
+(A) Autonomy
+(B) Beneficence
+(C) Non‑maleficence
+(D) Justice
+Correct Answer: B
+Explanation: Beneficence = doing good, acting for the patient's benefit. Non‑maleficence = "do no harm."
+
+45. Topic: Foundations – Vital signs
+Question: The normal respiratory rate for a healthy adult is:
+(A) 8‑12 breaths/min
+(B) 12‑20 breaths/min
+(C) 20‑30 breaths/min
+(D) 30‑40 breaths/min
+Correct Answer: B
+Explanation: Normal adult respiratory rate is 12‑20 breaths/min; tachypnea >20, bradypnea <12.
+
+46. Topic: Foundations – Nursing process
+Question: The phase of the nursing process in which the nurse formulates a nursing diagnosis is:
+(A) Assessment
+(B) Diagnosis
+(C) Planning
+(D) Implementation
+Correct Answer: B
+Explanation: After assessment, the nurse analyzes data and formulates nursing diagnoses (NANDA) in the diagnosis phase.
+
+47. Topic: Foundations – Isolation precautions
+Question: A patient with active pulmonary tuberculosis requires which type of precautions?
+(A) Contact
+(B) Droplet
+(C) Airborne
+(D) Standard
+Correct Answer: C
+Explanation: TB requires airborne precautions (negative pressure room, N95 respirator). Droplet is for flu, pertussis.
+
+48. Topic: Foundations – Legal aspects
+Question: A nurse who threatens to restrain a patient without medical indication may be charged with:
+(A) Negligence
+(B) Malpractice
+(C) Assault
+(D) Battery
+Correct Answer: C
+Explanation: Assault is the threat or attempt to touch a person without consent. Battery is actual harmful/offensive contact.
+
+49. Topic: Foundations – Communication
+Question: When a patient asks a direct question about a treatment, the nurse is unsure of the answer. The best response is:
+(A) "I think it's fine."
+(B) "Let me find out for you."
+(C) "You should ask your doctor."
+(D) "I don't know."
+Correct Answer: B
+Explanation: Acknowledging uncertainty and promising to obtain correct information builds trust and ensures accuracy.
+
+50. Topic: Foundations – Death and dying
+Question: According to Kübler‑Ross, the stage where a patient tries to negotiate for more time is:
+(A) Denial
+(B) Anger
+(C) Bargaining
+(D) Depression
+Correct Answer: C
+Explanation: Bargaining involves making deals (e.g., "If I live through this, I will…") to postpone death.
+
+MEDICAL‑SURGICAL NURSING (15)
+51. Topic: Med‑Surg – Diabetes insipidus
+Question: Central diabetes insipidus is characterized by:
+(A) High ADH, concentrated urine
+(B) Low ADH, dilute urine
+(C) High aldosterone, hypernatremia
+(D) Low cortisol, hyponatremia
+Correct Answer: B
+Explanation: Central DI: deficiency of ADH → large volume of dilute urine (specific gravity <1.005), polydipsia, hypernatremia.
+
+52. Topic: Med‑Surg – Heart failure
+Question: Which finding is an early sign of left‑sided heart failure?
+(A) Peripheral edema
+(B) Jugular venous distension
+(C) Paroxysmal nocturnal dyspnea (PND)
+(D) Hepatomegaly
+Correct Answer: C
+Explanation: Left heart failure → pulmonary congestion → PND, orthopnea, crackles. Right failure causes systemic congestion (edema, JVD).
+
+53. Topic: Med‑Surg – Acute kidney injury
+Question: In prerenal acute kidney injury, the most characteristic laboratory finding is:
+(A) High urine sodium (>40 mEq/L)
+(B) Fractional excretion of sodium (FeNa) <1%
+(C) Urinary casts
+(D) Hyperkalemia with normal urine output
+Correct Answer: B
+Explanation: Prerenal AKI → low urine sodium (<20), FeNa <1% (due to sodium retention). Intrinsic renal → FeNa >2%.
+
+54. Topic: Med‑Surg – COPD
+Question: Which oxygen delivery device can deliver the highest concentration (up to 90%)?
+(A) Nasal cannula 2 L/min
+(B) Simple face mask
+(C) Venturi mask
+(D) Non‑rebreather mask
+Correct Answer: D
+Explanation: Non‑rebreather with reservoir and one‑way valves can provide FiO2 up to 90% (10‑15 L/min). Venturi gives precise lower concentrations.
+
+55. Topic: Med‑Surg – Seizure disorders
+Question: During a generalized tonic‑clonic seizure, the nurse's priority action is to:
+(A) Insert a tongue blade
+(B) Restrain the patient
+(C) Turn the patient to the side and protect the head
+(D) Administer IV lorazepam immediately
+Correct Answer: C
+Explanation: Protect from injury (cushion head, loosen tight clothing, turn to lateral position to prevent aspiration). Do not put anything in mouth.
+
+56. Topic: Med‑Surg – Anaphylaxis
+Question: The first sign of anaphylaxis is often:
+(A) Hypotension
+(B) Stridor
+(C) Urticaria and flushing
+(D) Cardiac arrest
+Correct Answer: C
+Explanation: Cutaneous symptoms (hives, flushing, pruritus) are earliest. Respiratory and cardiovascular signs follow.
+
+57. Topic: Med‑Surg – GI bleeding
+Question: Melena (black, tarry stool) indicates bleeding from which site?
+(A) Hemorrhoids
+(B) Lower colon
+(C) Upper GI tract (esophagus, stomach, duodenum)
+(D) Small bowel only
+Correct Answer: C
+Explanation: Blood from upper GI tract is digested by gastric acid and enzymes → black, tarry melena. Lower GI bleeding is bright red or maroon.
+
+58. Topic: Med‑Surg – Chest tube
+Question: Continuous bubbling in the water seal chamber of a chest drainage system indicates:
+(A) Normal function
+(B) Air leak
+(C) Tension pneumothorax
+(D) Tube obstruction
+Correct Answer: B
+Explanation: Intermittent bubbling with expiration/Valsalva is normal; continuous bubbling suggests an air leak in the system or patient.
+
+59. Topic: Med‑Surg – Thyroid disorders
+Question: A patient with Graves' disease who develops fever, tachycardia, and delirium post‑operatively may be experiencing:
+(A) Myxedema coma
+(B) Thyroid storm
+(C) Hypoparathyroidism
+(D) Adrenal crisis
+Correct Answer: B
+Explanation: Thyroid storm is a life‑threatening exacerbation of hyperthyroidism triggered by surgery, infection, etc. Myxedema coma is hypothyroid.
+
+60. Topic: Med‑Surg – Electrolyte imbalance
+Question: A serum potassium of 2.8 mEq/L is most likely to cause:
+(A) Cardiac arrest in diastole
+(B) Tall peaked T waves
+(C) Muscle weakness and U waves on ECG
+(D) Paralytic ileus and tetany
+Correct Answer: C
+Explanation: Hypokalemia (<3.5) causes muscle weakness, U waves, flattened T waves, and risk of arrhythmia. Tetany is from hypocalcemia.
+
+61. Topic: Med‑Surg – Stroke (CVA)
+Question: In an ischemic stroke, recombinant tissue plasminogen activator (rtPA) should be given within how many hours of symptom onset?
+(A) 1 hour
+(B) 3 hours (up to 4.5)
+(C) 6 hours
+(D) 12 hours
+Correct Answer: B
+Explanation: rtPA is approved within 3 hours, but some guidelines extend to 4.5 hours. Beyond that, risk of hemorrhage outweighs benefit.
+
+62. Topic: Med‑Surg – Diabetes mellitus
+Question: A patient with type 1 diabetes who has nausea, vomiting, deep rapid breathing, and a fruity breath odor is likely in:
+(A) Hypoglycemia
+(B) Diabetic ketoacidosis (DKA)
+(C) Hyperosmolar hyperglycemic state (HHS)
+(D) Lactic acidosis
+Correct Answer: B
+Explanation: DKA presents with hyperglycemia, ketosis, acidosis (Kussmaul breathing), and acetone breath. HHS has no ketones.
+
+63. Topic: Med‑Surg – Pneumonia
+Question: Which finding is most specific for bacterial pneumonia?
+(A) Dry cough
+(B) Low‑grade fever
+(C) Purulent sputum with lobar consolidation on CXR
+(D) Wheezing
+Correct Answer: C
+Explanation: Bacterial pneumonia often produces purulent (yellow/green) sputum and lobar consolidation. Viral/atypical may be diffuse.
+
+64. Topic: Med‑Surg – Cirrhosis
+Question: A patient with cirrhosis and ascites is at risk for spontaneous bacterial peritonitis (SBP). The diagnostic paracentesis finding in SBP is:
+(A) WBC count >250/mm3 with >50% neutrophils
+(B) Low serum‑ascites albumin gradient
+(C) Amylase >1000 U/L
+(D) Red blood cells >10,000/mm3
+Correct Answer: A
+Explanation: SBP is diagnosed by ascitic fluid PMN >250 cells/mm3 without an intra‑abdominal source. High SAAG indicates portal hypertension.
+
+65. Topic: Med‑Surg – Pain assessment
+Question: Which pain scale is most appropriate for a cognitively impaired elderly patient?
+(A) Numeric Rating Scale (0‑10)
+(B) Visual Analog Scale
+(C) FLACC scale
+(D) PAINAD scale
+Correct Answer: D
+Explanation: PAINAD (Pain Assessment in Advanced Dementia) uses behaviors (breathing, vocalization, facial expression, consolability). FLACC is for children.
+
+PEDIATRIC NURSING (8)
+66. Topic: Pediatrics – Newborn reflexes
+Question: The Moro (startle) reflex normally disappears by what age?
+(A) 2 weeks
+(B) 2 months
+(C) 4‑6 months
+(D) 12 months
+Correct Answer: C
+Explanation: Moro reflex disappears by 4‑6 months; persistence beyond 6 months suggests neurological impairment.
+
+67. Topic: Pediatrics – Dehydration
+Question: The earliest clinical sign of dehydration in an infant is:
+(A) Sunken fontanelle
+(B) Tachycardia
+(C) Decreased urine output
+(D) Weight loss
+Correct Answer: B
+Explanation: Tachycardia is an early compensatory sign. Sunken fontanelle, poor skin turgor, and oliguria occur with moderate‑severe dehydration.
+
+68. Topic: Pediatrics – Immunization
+Question: A child who received the first dose of MMR at 12 months should receive the second dose at:
+(A) 15 months
+(B) 18 months
+(C) 4‑6 years (school entry)
+(D) 10 years
+Correct Answer: C
+Explanation: Two doses of MMR are required: first at 12‑15 months, second at 4‑6 years (or 1 month after first in outbreaks).
+
+69. Topic: Pediatrics – Congenital heart disease
+Question: In patent ductus arteriosus (PDA), the hallmark murmur is:
+(A) Harsh holosystolic at left lower sternal border
+(B) Continuous "machinery" murmur
+(C) Ejection systolic at right upper sternal border
+(D) Diastolic rumble at apex
+Correct Answer: B
+Explanation: PDA produces a continuous, "machinery‑like" murmur due to flow from aorta to pulmonary artery throughout the cardiac cycle.
+
+70. Topic: Pediatrics – Croup
+Question: A child with acute laryngotracheobronchitis (croup) has a characteristic:
+(A) Barking cough and inspiratory stridor
+(B) Wheezing and prolonged expiration
+(C) Brassy cough with drooling
+(D) Silent chest and absent breath sounds
+Correct Answer: A
+Explanation: Croup (viral) presents with "seal‑like" barking cough, inspiratory stridor, and hoarseness. Drooling suggests epiglottitis.
+
+71. Topic: Pediatrics – Kawasaki disease
+Question: Which finding is a diagnostic criterion for Kawasaki disease?
+(A) Strawberry tongue
+(B) Petechial rash
+(C) Symmetric arthritis
+(D) Photophobia
+Correct Answer: A
+Explanation: Kawasaki diagnostic criteria: fever >5 days, bilateral conjunctival injection, oral changes (strawberry tongue, fissured lips), rash, extremity changes, cervical lymphadenopathy.
+
+72. Topic: Pediatrics – Child abuse
+Question: The finding most suspicious for non‑accidental trauma in an infant is:
+(A) Bruises on shins
+(B) Fractured clavicle from birth
+(C) Retinal hemorrhages and rib fractures of different ages
+(D) Skull molding
+Correct Answer: C
+Explanation: Retinal hemorrhages, posterior rib fractures, metaphyseal fractures, and multiple injuries at different healing stages are hallmarks of abuse.
+
+73. Topic: Pediatrics – Milestones
+Question: A 15‑month‑old child who cannot walk independently should be evaluated for:
+(A) Normal variation
+(B) Global developmental delay
+(C) Muscular dystrophy
+(D) Autism
+Correct Answer: B
+Explanation: Most children walk by 12‑15 months; if not walking by 18 months, further evaluation is warranted. Delay may be global or specific.
+
+PSYCHIATRIC NURSING (8)
+74. Topic: Psychiatry – Mood disorders
+Question: A patient with bipolar disorder in the manic phase is most likely to exhibit:
+(A) Pressured speech and grandiosity
+(B) Psychomotor retardation
+(C) Anhedonia
+(D) Hypersomnia
+Correct Answer: A
+Explanation: Mania: elevated mood, grandiosity, decreased need for sleep, pressured speech, racing thoughts, risk‑taking behaviors.
+
+75. Topic: Psychiatry – Obsessive‑compulsive disorder
+Question: A patient repeatedly checks the door lock 20 times before leaving. This behavior is a(n):
+(A) Compulsion
+(B) Obsession
+(C) Phobia
+(D) Delusion
+Correct Answer: A
+Explanation: Compulsions are repetitive behaviors performed to reduce anxiety from obsessions (recurrent intrusive thoughts). Checking is a compulsion.
+
+76. Topic: Psychiatry – Schizophrenia
+Question: "Word salad" (disorganized speech that is incomprehensible) is an example of:
+(A) Alogia
+(B) Thought blocking
+(C) Tangentiality
+(D) Incoherence
+Correct Answer: D
+Explanation: Incoherence (word salad) is severely disorganized speech lacking logical connection. Tangentiality eventually returns to topic; loosening of associations is related.
+
+77. Topic: Psychiatry – Antidepressants
+Question: The most serious adverse effect of MAO inhibitors is:
+(A) Hypertensive crisis after eating tyramine‑rich foods
+(B) Seizures
+(C) Cardiotoxicity
+(D) Weight loss
+Correct Answer: A
+Explanation: MAOIs block tyramine metabolism → ingestion of aged cheese, wine, etc. can cause severe hypertension and intracranial hemorrhage.
+
+78. Topic: Psychiatry – Defense mechanisms
+Question: A man who is angry at his boss but instead yells at his wife is using:
+(A) Displacement
+(B) Projection
+(C) Reaction formation
+(D) Sublimation
+Correct Answer: A
+Explanation: Displacement redirects emotion from a threatening target to a safer one. Sublimation channels into socially acceptable activity.
+
+79. Topic: Psychiatry – Anxiety disorders
+Question: Panic disorder is characterized by:
+(A) Recurrent, unexpected panic attacks and fear of future attacks
+(B) Persistent worry about many events
+(C) Fear of a specific object
+(D) Repetitive behaviors
+Correct Answer: A
+Explanation: Panic disorder: recurrent unexpected panic attacks with at least 1 month of concern about additional attacks. Agoraphobia may co‑occur.
+
+80. Topic: Psychiatry – Personality disorders
+Question: Which personality disorder is characterized by a pattern of instability in relationships, affect, and impulse control?
+(A) Antisocial
+(B) Borderline
+(C) Narcissistic
+(D) Paranoid
+Correct Answer: B
+Explanation: Borderline personality disorder: emotional dysregulation, unstable relationships, impulsivity, fear of abandonment, self‑harm.
+
+81. Topic: Psychiatry – Somatic symptom disorder
+Question: A patient with multiple physical complaints without organic cause but genuine suffering is diagnosed with:
+(A) Factitious disorder
+(B) Malingering
+(C) Somatic symptom disorder
+(D) Conversion disorder
+Correct Answer: C
+Explanation: Somatic symptom disorder: distress from physical symptoms (not intentionally produced) with disproportionate thoughts/feelings. Factitious = self‑induced for sick role.
+
+OBSTETRICAL NURSING (10)
+82. Topic: Obstetrics – Prenatal care
+Question: The recommended weight gain for a normal BMI (18.5‑24.9) pregnant woman is:
+(A) 5‑10 kg
+(B) 11.5‑16 kg
+(C) 17‑20 kg
+(D) >25 kg
+Correct Answer: B
+Explanation: IOM guidelines: underweight: 12.5‑18 kg; normal: 11.5‑16 kg; overweight: 7‑11.5 kg; obese: 5‑9 kg.
+
+83. Topic: Obstetrics – Fetal monitoring
+Question: Late decelerations in fetal heart rate are associated with:
+(A) Head compression
+(B) Uteroplacental insufficiency
+(C) Umbilical cord compression
+(D) Fetal sleep
+Correct Answer: B
+Explanation: Late decelerations are repetitive, uniform decelerations that begin after contraction peak, indicating hypoxia and placental insufficiency.
+
+84. Topic: Obstetrics – Gestational diabetes
+Question: The preferred screening test for gestational diabetes at 24‑28 weeks is:
+(A) Fasting plasma glucose
+(B) Oral glucose tolerance test (OGTT) with 75g glucose
+(C) HbA1c
+(D) Random blood glucose
+Correct Answer: B
+Explanation: Two‑step or one‑step 75g OGTT is standard for GDM diagnosis. Fasting glucose alone misses many.
+
+85. Topic: Obstetrics – Postpartum hemorrhage
+Question: The most common cause of early postpartum hemorrhage (first 24 hours) is:
+(A) Uterine atony
+(B) Genital tract laceration
+(C) Retained placental fragments
+(D) Coagulopathy
+Correct Answer: A
+Explanation: Uterine atony (failure of uterus to contract) accounts for ~80% of early PPH. Risk factors: overdistension, prolonged labor, etc.
+
+86. Topic: Obstetrics – Preeclampsia
+Question: Magnesium sulfate is administered in severe preeclampsia to:
+(A) Lower blood pressure
+(B) Prevent seizures (eclampsia)
+(C) Induce labor
+(D) Improve renal function
+Correct Answer: B
+Explanation: Magnesium sulfate is the drug of choice for eclampsia prophylaxis and treatment. It does not significantly lower BP.
+
+87. Topic: Obstetrics – Amniotic fluid embolism
+Question: A classic sign of amniotic fluid embolism during labor is:
+(A) Sudden hypotension, hypoxia, and coagulopathy
+(B) Prolonged second stage
+(C) Green‑stained fluid
+(D) Fetal bradycardia only
+Correct Answer: A
+Explanation: AFE is a medical emergency: sudden cardiovascular collapse, respiratory distress, and DIC. High mortality.
+
+88. Topic: Obstetrics – Breastfeeding
+Question: A mother with mastitis should be advised to:
+(A) Stop breastfeeding from the affected breast
+(B) Apply cold compresses only
+(C) Continue breastfeeding and take antibiotics
+(D) Pump and discard milk
+Correct Answer: C
+Explanation: Mastitis is often caused by Staphylococcus; continued breastfeeding helps clear infection and antibiotics (dicloxacillin) are needed.
+
+89. Topic: Obstetrics – Umbilical cord
+Question: The normal umbilical cord contains:
+(A) One vein and two arteries
+(B) Two veins and one artery
+(C) One vein and one artery
+(D) Two veins and two arteries
+Correct Answer: A
+Explanation: Two umbilical arteries (deoxygenated blood to placenta) and one vein (oxygenated to fetus). Single umbilical artery may indicate anomalies.
+
+90. Topic: Obstetrics – Contraception
+Question: Which combined oral contraceptive is contraindicated in a breastfeeding mother in the first 6 weeks postpartum?
+(A) Progestin‑only pill
+(B) Low‑dose estrogen‑progestin pill
+(C) Copper IUD
+(D) Levonorgestrel IUD
+Correct Answer: B
+Explanation: Estrogen‑containing contraceptives can reduce milk supply and increase thromboembolic risk early postpartum. Progestin‑only is safe.
+
+91. Topic: Obstetrics – Fetal lie
+Question: In a cephalic presentation, the presenting part is usually the:
+(A) Brow
+(B) Face
+(C) Vertex (occiput)
+(D) Breech
+Correct Answer: C
+Explanation: Vertex (flexed head) is most common (~95%). Face or brow are abnormal presentations.
+
+COMMUNITY HEALTH NURSING (9)
+92. Topic: Community Health – Epidemiology
+Question: The number of new cases of a disease in a population during a specified time period is the:
+(A) Prevalence
+(B) Incidence
+(C) Case fatality rate
+(D) Attack rate
+Correct Answer: B
+Explanation: Incidence = new cases. Prevalence = total (new + existing) cases at a point or period.
+
+93. Topic: Community Health – NFHS
+Question: The National Family Health Survey (NFHS) in India is conducted by:
+(A) Ministry of Health and Family Welfare
+(B) Indian Council of Medical Research (ICMR)
+(C) Registrar General of India
+(D) International Institute for Population Sciences (IIPS)
+Correct Answer: D
+Explanation: NFHS is a large‑scale survey conducted by IIPS under the aegis of the Ministry of Health.
+
+94. Topic: Community Health – Pradhan Mantri Jan Arogya Yojana
+Question: PM‑JAY provides health coverage up to how much per family per year?
+(A) ₹50,000
+(B) ₹1 lakh
+(C) ₹5 lakh
+(D) ₹10 lakh
+Correct Answer: C
+Explanation: PM‑JAY (Ayushman Bharat) provides ₹5 lakh per family per year for secondary and tertiary care.
+
+95. Topic: Community Health – Vector control
+Question: The most effective method to prevent dengue fever in a community is:
+(A) Mass vaccination
+(B) Insecticide spraying only
+(C) Elimination of Aedes mosquito breeding sites (water containers)
+(D) Antibiotic prophylaxis
+Correct Answer: C
+Explanation: No specific antiviral; vector control (source reduction, larvicides) is key. Dengue vaccine has limited use.
+
+96. Topic: Community Health – Oral rehydration
+Question: ORS solution prepared at home using the "one‑hand" method (6 level teaspoons sugar + ½ level teaspoon salt in 1 liter water) is used for:
+(A) Severe dehydration needing IV fluids
+(B) Prevention and treatment of mild‑moderate dehydration
+(C) Cholera only
+(D) Vomiting children only
+Correct Answer: B
+Explanation: ORS rehydrates in acute diarrhea; severe dehydration requires IV Ringer's lactate. Home‑made ORS is acceptable.
+
+97. Topic: Community Health – ICDS
+Question: The Integrated Child Development Services (ICDS) scheme provides all of the following EXCEPT:
+(A) Supplementary nutrition
+(B) Immunization
+(C) Hospital delivery care
+(D) Pre‑school education
+Correct Answer: C
+Explanation: ICDS (Anganwadi) provides nutrition, immunization (referral), health check‑ups, and preschool education – not hospital delivery.
+
+98. Topic: Community Health – Quarantine
+Question: Quarantine is defined as:
+(A) Isolation of a sick person
+(B) Restriction of movement of healthy contacts exposed to a communicable disease
+(C) Sterilization of contaminated items
+(D) Vaccination of all community members
+Correct Answer: B
+Explanation: Quarantine = restriction of healthy exposed persons. Isolation = separation of sick individuals.
+
+99. Topic: Community Health – Sanitation
+Question: The "Swachh Bharat Mission" primarily aims at:
+(A) Universal vaccination
+(B) Open defecation free (ODF) India
+(C) Clean drinking water only
+(D) Air pollution control
+Correct Answer: B
+Explanation: Swachh Bharat focuses on eliminating open defecation through construction of toilets and behavior change.
+
+100. Topic: Community Health – International health
+Question: The World Health Organization (WHO) defines health as:
+(A) Absence of disease
+(B) A state of complete physical, mental, and social well‑being
+(C) Ability to perform daily activities
+(D) Fitness for work
+Correct Answer: B
+Explanation: WHO (1948) definition includes physical, mental, and social well‑being, not merely absence of disease.
+
+END OF JEPBN MOCK TEST – 2

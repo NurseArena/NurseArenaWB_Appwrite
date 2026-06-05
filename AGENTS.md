@@ -99,11 +99,34 @@ Create these in Appwrite Cloud Console (all lowercase camelCase attribute names)
 | explanation | string | Explanation |
 | order_index | number | Question order |
 
+### `attempts` — Granular per-question history
+| Attribute | Type | Notes |
+|-----------|------|-------|
+| userId | string | User ID |
+| questionId | string | Question document ID |
+| subject_name | string | Subject name for per-subject analytics |
+| selectedOption | string | Selected option label (A/B/C/D) |
+| isCorrect | boolean | Whether the answer was correct |
+| timeTakenMs | number | Response time in milliseconds |
+
 ### Other collections
-- `attempts` — Granular per-question history
 - `quizzes` — Quiz definitions
 - `quiz_questions` — Quiz-to-question mapping
-- `leaderboard` — Cached rank data
+### `leaderboard` — Cached rank data (all 3 period types)
+| Attribute | Type | Notes |
+|-----------|------|-------|
+| userId | string | User ID |
+| exam_id | string | Exam code |
+| period_type | string | daily / weekly / all_time |
+| displayName | string | Display name |
+| photoURL | string | Avatar URL |
+| marksEarned | number | Marks for the period |
+| correct | number | Correct answers for the period |
+| wrong | number | Wrong answers for the period |
+| percentage | number | Accuracy percentage |
+| rank | number | Rank position |
+| period_start | string | ISO date for daily/weekly reset tracking |
+- Document ID format: `${userId}_${examCode}_${periodType}`
 - `notifications` — Push notifications
 - `mock_test_events` — Scheduled mock tests
 - `live_quiz_events` — Live quiz events

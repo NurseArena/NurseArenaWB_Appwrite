@@ -66,6 +66,7 @@ export interface QuestionWithStatus {
   explanation?: string;
   difficulty?: string;
   topic?: string;
+  subject?: string;
   answered?: boolean;
   selected?: string | string[];
   isCorrect?: boolean;

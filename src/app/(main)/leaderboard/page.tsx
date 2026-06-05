@@ -24,6 +24,51 @@ const medals = [
   { icon: Award, color: 'text-primary' },
 ];
 
+function mapRow(entry: Record<string, unknown>, i: number, currentUserId?: string): LeaderboardRow {
+  const uid = (entry.userId as string) ?? (entry.user_id as string) ?? '';
+  return {
+    rank: i + 1,
+    userId: uid,
+    name: (entry.displayName as string) || '',
+    avatar: entry.photoURL as string | undefined,
+    marksEarned: (entry.marksEarned as number) ?? 0,
+    percentage: (entry.percentage as number) ?? 0,
+    wrong: (entry.wrong as number) ?? 0,
+    totalMarksEarned: (entry.totalMarksEarned as number) ?? (entry.marksEarned as number) ?? 0,
+    isCurrentUser: uid === currentUserId,
+  };
+}
+
+async function resolveMissingNames(rows: LeaderboardRow[]): Promise<LeaderboardRow[]> {
+  const missing = rows.filter((r) => !r.name);
+  if (missing.length === 0) return rows;
+
+  const nameMap = new Map<string, string>();
+  const batchSize = 25;
+  for (let i = 0; i < missing.length; i += batchSize) {
+    const batch = missing.slice(i, i + batchSize);
+    const ids = batch.map((r) => r.userId);
+    try {
+      const { documents } = await databases.listDocuments(DB_ID, 'profiles', [
+        Query.equal('$id', ids),
+        Query.limit(batchSize),
+      ]);
+      for (const doc of documents) {
+        const profile = doc as Record<string, unknown>;
+        nameMap.set(
+          profile.$id as string,
+          (profile.displayName as string) || (profile.name as string) || '',
+        );
+      }
+    } catch {}
+  }
+
+  return rows.map((r) => ({
+    ...r,
+    name: r.name || nameMap.get(r.userId) || 'User',
+  }));
+}
+
 export default function LeaderboardPage() {
   const [rows, setRows] = useState<LeaderboardRow[]>([]);
   const [period, setPeriod] = useState<PeriodType>('all_time');
@@ -43,22 +88,12 @@ export default function LeaderboardPage() {
         ];
         const { documents } = await databases.listDocuments(DB_ID, 'leaderboard', queries);
         if (!cancelled && documents) {
-          const mapped: LeaderboardRow[] = documents.map((entry: Record<string, unknown>, i: number) => ({
-            rank: i + 1,
-            userId: entry.userId as string ?? entry.user_id as string,
-            name: (entry.displayName as string) || 'Anonymous',
-            avatar: entry.photoURL as string | undefined,
-            marksEarned: (entry.marksEarned as number) ?? 0,
-            percentage: (entry.percentage as number) ?? 0,
-            wrong: (entry.wrong as number) ?? 0,
-            totalMarksEarned: (entry.totalMarksEarned as number) ?? (entry.marksEarned as number) ?? 0,
-            isCurrentUser: (entry.userId as string ?? entry.user_id as string) === user?.id,
-          }));
-          setRows(mapped);
+          let mapped = documents.map((entry, i) => mapRow(entry as Record<string, unknown>, i, user?.id));
+          mapped = await resolveMissingNames(mapped);
+          if (!cancelled) setRows(mapped);
         }
       } catch (err) {
         console.error('Leaderboard fetch failed (create composite index: exam_id ASC + period_type ASC + marksEarned DESC):', err);
-        // fallback: fetch without sorting
         try {
           const examId = config?.code;
           const { documents } = await databases.listDocuments(DB_ID, 'leaderboard', [
@@ -68,18 +103,9 @@ export default function LeaderboardPage() {
           ]);
           if (!cancelled && documents) {
             const sorted = documents.sort((a, b) => (b.marksEarned as number ?? 0) - (a.marksEarned as number ?? 0));
-            const mapped: LeaderboardRow[] = sorted.map((entry: Record<string, unknown>, i: number) => ({
-              rank: i + 1,
-              userId: entry.userId as string ?? entry.user_id as string,
-              name: (entry.displayName as string) || 'Anonymous',
-              avatar: entry.photoURL as string | undefined,
-              marksEarned: (entry.marksEarned as number) ?? 0,
-              percentage: (entry.percentage as number) ?? 0,
-              wrong: (entry.wrong as number) ?? 0,
-              totalMarksEarned: (entry.totalMarksEarned as number) ?? (entry.marksEarned as number) ?? 0,
-              isCurrentUser: (entry.userId as string ?? entry.user_id as string) === user?.id,
-            }));
-            setRows(mapped);
+            let mapped = sorted.map((entry, i) => mapRow(entry as Record<string, unknown>, i, user?.id));
+            mapped = await resolveMissingNames(mapped);
+            if (!cancelled) setRows(mapped);
           }
         } catch (fallbackErr) {
           console.error('Leaderboard fallback fetch also failed:', fallbackErr);

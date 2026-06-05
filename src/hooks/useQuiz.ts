@@ -7,6 +7,8 @@ import { Query, ID } from 'appwrite';
 import { calculateMarks as calculateMarksV2 } from '@/lib/xp';
 import { calculateMarks as calculateScoring, calculateSessionScore } from '@/lib/scoring';
 import type { QuestionWithStatus, ScoringProfile } from '@/types/quiz';
+import { upsertLeaderboardEntries } from '@/services/leaderboard';
+import { checkAndUpdateStreak } from '@/services/profiles';
 
 const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
 
@@ -189,6 +191,7 @@ export function useQuiz() {
           explanation: String(q.explanation ?? ''),
           difficulty: String(q.difficulty ?? '') as 'easy' | 'medium' | 'hard',
           topic: String(q.topic ?? ''),
+          subject: String(q.subject_name ?? ''),
         };
       });
 
@@ -293,6 +296,7 @@ export function useQuiz() {
           {
             userId: user.id,
             questionId: q.id,
+            subject_name: q.subject ?? '',
             selectedOption: Array.isArray(selected) ? selected.join(',') : selected,
             isCorrect,
             timeTakenMs: timeMs,
@@ -386,36 +390,19 @@ export function useQuiz() {
               totalWrong: newWrong,
               totalSkipped: newSkipped,
             }).then(() => {
-              const examCode = examCodeRef.current!;
-              const attemptedQ = newCorrect + newWrong;
-              const percentage = attemptedQ > 0 ? (newCorrect / attemptedQ) * 100 : 0;
-              const docId = `${user.id}_${examCode}_all_time`;
-
-              databases.getDocument(DB_ID, 'leaderboard', docId).then((existing) => {
-                if (existing) {
-                  databases.updateDocument(DB_ID, 'leaderboard', docId, {
-                    marksEarned: newTotalMarksEarned,
-                    percentage: Math.round(percentage * 100) / 100,
-                    wrong: newWrong,
-                    totalMarksEarned: newTotalMarksEarned,
-                    displayName: user.displayName,
-                    photoURL: user.photoURL,
-                  }).then(() => {}, () => {});
-                }
-              }).catch(() => {
-                databases.createDocument(DB_ID, 'leaderboard', docId, {
-                  userId: user.id,
-                  exam_id: examCode,
-                  period_type: 'all_time',
-                  displayName: user.displayName,
-                  photoURL: user.photoURL,
-                  marksEarned: newTotalMarksEarned,
-                  percentage: Math.round(percentage * 100) / 100,
-                  wrong: newWrong,
-                  totalMarksEarned: newTotalMarksEarned,
-                  rank: 0,
-                }).then(() => {}, () => {});
-              });
+              upsertLeaderboardEntries(
+                user.id,
+                examCodeRef.current!,
+                user.displayName || '',
+                user.photoURL ?? null,
+                marksData.marksEarned,
+                marksData.correct,
+                marksData.wrong,
+                newTotalMarksEarned,
+                newCorrect,
+                newWrong,
+              );
+              checkAndUpdateStreak(user.id);
             }, () => {});
           }
         }, () => {});
@@ -473,36 +460,20 @@ export function useQuiz() {
           });
 
           if (examCodeRef.current) {
-            const examCode = examCodeRef.current;
-            const attemptedQ = newCorrect + newWrong;
-            const percentage = attemptedQ > 0 ? (newCorrect / attemptedQ) * 100 : 0;
-            const docId = `${user.id}_${examCode}_all_time`;
-
-            try {
-              await databases.getDocument(DB_ID, 'leaderboard', docId);
-              await databases.updateDocument(DB_ID, 'leaderboard', docId, {
-                marksEarned: newTotalMarksEarned,
-                percentage: Math.round(percentage * 100) / 100,
-                wrong: newWrong,
-                totalMarksEarned: newTotalMarksEarned,
-                displayName: user.displayName,
-                photoURL: user.photoURL,
-              });
-            } catch {
-              await databases.createDocument(DB_ID, 'leaderboard', docId, {
-                userId: user.id,
-                exam_id: examCode,
-                period_type: 'all_time',
-                displayName: user.displayName,
-                photoURL: user.photoURL,
-                marksEarned: newTotalMarksEarned,
-                percentage: Math.round(percentage * 100) / 100,
-                wrong: newWrong,
-                totalMarksEarned: newTotalMarksEarned,
-                rank: 0,
-              });
-            }
+            await upsertLeaderboardEntries(
+              user.id,
+              examCodeRef.current,
+              user.displayName || '',
+              user.photoURL ?? null,
+              marksData.marksEarned,
+              marksData.correct,
+              marksData.wrong,
+              newTotalMarksEarned,
+              newCorrect,
+              newWrong,
+            );
           }
+          checkAndUpdateStreak(user.id);
         }
       } catch {}
     }

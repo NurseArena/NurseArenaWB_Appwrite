@@ -1,4 +1,5 @@
 import { databases } from '@/lib/appwrite/client';
+import { upsertLeaderboardEntries } from '@/services/leaderboard';
 
 const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
 
@@ -29,32 +30,18 @@ export async function updateStats(
       totalSkipped: newSkipped,
     });
 
-    const attemptedQ = newCorrect + newWrong;
-    const percentage = attemptedQ > 0 ? (newCorrect / attemptedQ) * 100 : 0;
-    const docId = `${userId}_${examCode}_all_time`;
-
-    try {
-      await databases.getDocument(DB_ID, 'leaderboard', docId);
-      await databases.updateDocument(DB_ID, 'leaderboard', docId, {
-        marksEarned: newTotalMarksEarned,
-        percentage: Math.round(percentage * 100) / 100,
-        wrong: newWrong,
-        displayName,
-        photoURL,
-      });
-    } catch {
-      await databases.createDocument(DB_ID, 'leaderboard', docId, {
-        userId,
-        exam_id: examCode,
-        period_type: 'all_time',
-        displayName,
-        photoURL,
-        marksEarned: newTotalMarksEarned,
-        percentage: Math.round(percentage * 100) / 100,
-        wrong: newWrong,
-        rank: 0,
-      });
-    }
+    await upsertLeaderboardEntries(
+      userId,
+      examCode,
+      displayName,
+      photoURL,
+      sessionMarksEarned,
+      sessionCorrect,
+      sessionWrong,
+      newTotalMarksEarned,
+      newCorrect,
+      newWrong,
+    );
   } catch (err) {
     console.error('Failed to update stats:', err);
   }

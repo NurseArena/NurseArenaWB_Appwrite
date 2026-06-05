@@ -1,5 +1,8 @@
 'use client';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { databases } from '@/lib/appwrite/client';
+import { Query } from 'appwrite';
 import { useExam } from '@/hooks/useExam';
 import { Card } from '@/components/ui/card';
 import { AccuracyChart } from '@/components/charts/AccuracyChart';
@@ -8,9 +11,14 @@ import { ExamBadge } from '@/components/exam/ExamBadge';
 import { BarChart3, Brain, Target, TrendingUp } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 
+const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
+
+const FILL_COLORS = ['#6366f1', '#a855f7', '#22d3ee', '#f59e0b', '#ec4899', '#10b981', '#3b82f6', '#ef4444'];
+
 export default function AnalyticsPage() {
   const { subjects } = useExam();
   const user = useAuthStore((s) => s.user);
+  const [subjectData, setSubjectData] = useState<{ subject: string; accuracy: number; fill: string }[]>([]);
 
   const totalQs = user?.totalQuestionsAttempted ?? 0;
   const totalCorrect = user?.totalCorrect ?? 0;
@@ -22,13 +30,51 @@ export default function AnalyticsPage() {
 
   const hasData = totalQs > 0;
 
-  const subjectData = subjects.length > 0
-    ? subjects.map((s, i) => ({
-        subject: s.name,
-        accuracy: hasData ? Math.round((totalCorrect / totalQs) * 100) : 0,
-        fill: i === 0 ? '#6366f1' : i === 1 ? '#a855f7' : '#22d3ee',
-      }))
-    : [];
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { documents } = await databases.listDocuments(DB_ID, 'attempts', [
+          Query.equal('userId', user.id),
+          Query.limit(2000),
+        ]);
+        if (cancelled) return;
+
+        const subjectMap = new Map<string, { correct: number; total: number }>();
+        for (const doc of documents) {
+          const a = doc as Record<string, unknown>;
+          const sub = (a.subject_name as string) || '';
+          if (!sub) continue;
+          const entry = subjectMap.get(sub) ?? { correct: 0, total: 0 };
+          entry.total++;
+          if (a.isCorrect) entry.correct++;
+          subjectMap.set(sub, entry);
+        }
+
+        const computed = subjects
+          .filter((s) => subjectMap.has(s.name))
+          .map((s, i) => ({
+            subject: s.name,
+            accuracy: Math.round((subjectMap.get(s.name)!.correct / subjectMap.get(s.name)!.total) * 100),
+            fill: FILL_COLORS[i % FILL_COLORS.length],
+          }));
+
+        for (const [sub, data] of subjectMap) {
+          if (!subjects.some((s) => s.name === sub)) {
+            computed.push({
+              subject: sub,
+              accuracy: Math.round((data.correct / data.total) * 100),
+              fill: FILL_COLORS[computed.length % FILL_COLORS.length],
+            });
+          }
+        }
+
+        if (!cancelled) setSubjectData(computed);
+      } catch {}
+    })();
+    return () => { cancelled = true; };
+  }, [user, subjects]);
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
