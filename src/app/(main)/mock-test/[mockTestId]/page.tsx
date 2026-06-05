@@ -56,6 +56,7 @@ export default function MockTestTakingPage() {
         const { documents: qs } = await databases.listDocuments(DB_ID, 'mock_test_questions', [
           Query.equal('mock_test_id', mockTestId),
           Query.orderAsc('order_index'),
+          Query.limit(100),
         ]);
         if (cancelled) return;
         const typed = qs as unknown as MockTestQuestion[];

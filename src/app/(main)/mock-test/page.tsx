@@ -73,17 +73,19 @@ export default function MockTestPage() {
           </div>
         </div>
 
-        <div className="space-y-2 mb-6">
-          <p className="text-xs font-bold uppercase tracking-widest text-ink-muted">Subjects</p>
-          {config.subjects.map((s) => (
-            <div key={s.name} className="flex items-center justify-between text-sm">
-              <span className="text-ink-muted">
-                {s.icon} {s.name}
-              </span>
-              <span className="text-ink font-bold">{s.totalQ} Q · {s.marks} marks</span>
-            </div>
-          ))}
-        </div>
+        {activeExam !== 'JEPBN' && (
+          <div className="space-y-2 mb-6">
+            <p className="text-xs font-bold uppercase tracking-widest text-ink-muted">Subjects</p>
+            {config.subjects.map((s) => (
+              <div key={s.name} className="flex items-center justify-between text-sm">
+                <span className="text-ink-muted">
+                  {s.icon} {s.name}
+                </span>
+                <span className="text-ink font-bold">{s.totalQ} Q · {s.marks} marks</span>
+              </div>
+            ))}
+          </div>
+        )}
       </Card>
 
       <div>
