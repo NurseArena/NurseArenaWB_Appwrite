@@ -156,7 +156,7 @@ export default function MockTestTakingPage() {
           }
         } catch {}
         if (user && examCode) {
-          updateStats(user.id, user.displayName, user.photoURL, examCode, score, total, correct, wrong, skipped);
+          updateStats(user.id, user.displayName ?? '', user.photoURL ?? '', examCode, score, total, correct, wrong, skipped);
         }
         setPhase('finished');
         const p = new URLSearchParams({
@@ -172,7 +172,7 @@ export default function MockTestTakingPage() {
       })();
     } else {
       if (user && examCode) {
-        updateStats(user.id, user.displayName, user.photoURL, examCode, score, total, correct, wrong, skipped);
+        updateStats(user.id, user.displayName ?? '', user.photoURL ?? '', examCode, score, total, correct, wrong, skipped);
       }
       setPhase('finished');
       const p = new URLSearchParams({

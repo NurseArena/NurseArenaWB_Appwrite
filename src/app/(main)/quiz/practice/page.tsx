@@ -119,7 +119,7 @@ function PracticeContent() {
   useEffect(() => {
     if (phase === 'result' && user && questions.length > 0) {
       const skipped = questions.length - correctCount - wrongCount;
-      updateStats(user.id, user.displayName, user.photoURL, activeExam, correctCount, questions.length, correctCount, wrongCount, skipped);
+      updateStats(user.id, user.displayName ?? '', user.photoURL ?? '', activeExam, correctCount, questions.length, correctCount, wrongCount, skipped);
     }
   }, [phase, user, activeExam, questions.length, correctCount, wrongCount]);
 

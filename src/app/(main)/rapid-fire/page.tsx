@@ -160,7 +160,7 @@ export default function RapidFirePage() {
 
   useEffect(() => {
     if (phase === 'result' && user && questions.length > 0) {
-      updateStats(user.id, user.displayName, user.photoURL, activeExam, correctCount, TOTAL_QUESTIONS, correctCount, wrongCount, skippedCount);
+      updateStats(user.id, user.displayName ?? '', user.photoURL ?? '', activeExam, correctCount, TOTAL_QUESTIONS, correctCount, wrongCount, skippedCount);
     }
   }, [phase, user, activeExam, questions.length, correctCount, wrongCount, skippedCount]);
 
