@@ -37,7 +37,7 @@ export default function MockTestTakingPage() {
 
   const mockTestId = params.mockTestId as string;
   const q = questions[currentIndex];
-  const answered = q ? answers[q.$id ?? q.id] : undefined;
+  const answered = q ? answers[q.$id ?? q.id ?? ''] : undefined;
   const answeredCount = Object.keys(answers).length;
   const correctCount = Object.values(answers).filter((a) => a.isCorrect).length;
 
@@ -139,7 +139,7 @@ export default function MockTestTakingPage() {
           });
 
           for (const qu of currentQuestions) {
-            const qId = qu.$id ?? qu.id;
+            const qId = qu.$id ?? qu.id ?? '';
             const ans = currentAnswers[qId];
             await databases.createDocument(DB_ID, 'session_answers', ID.unique(), {
               sessionId: sid,
@@ -191,7 +191,7 @@ export default function MockTestTakingPage() {
   const handleAnswer = useCallback((option: string) => {
     if (!q || answered) return;
     const isCorrect = option.toUpperCase() === (q.correct ?? '').toUpperCase();
-    setAnswers((prev) => ({ ...prev, [q.$id ?? q.id]: { selected: option, isCorrect, timeMs: Date.now() - startTimeRef.current } }));
+    setAnswers((prev) => ({ ...prev, [q.$id ?? q.id ?? '']: { selected: option, isCorrect, timeMs: Date.now() - startTimeRef.current } }));
   }, [q, answered]);
 
   const mins = Math.floor(timeRemaining / 60);
@@ -222,7 +222,7 @@ export default function MockTestTakingPage() {
 
   if (!q) return null;
 
-  const allAnswered = questions.every((qu) => answers[qu.$id ?? qu.id]);
+  const allAnswered = questions.every((qu) => answers[qu.$id ?? qu.id ?? '']);
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-3xl mx-auto">
@@ -330,7 +330,7 @@ export default function MockTestTakingPage() {
 
       <div className="mt-4 flex flex-wrap gap-1.5 justify-center">
         {questions.map((qu, i) => {
-          const ans = answers[qu.$id ?? qu.id];
+          const ans = answers[qu.$id ?? qu.id ?? ''];
           let bg = 'bg-surface2';
           if (ans?.isCorrect) bg = 'bg-success';
           else if (ans && !ans.isCorrect) bg = 'bg-danger';
