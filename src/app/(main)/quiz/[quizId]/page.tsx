@@ -30,6 +30,7 @@ export default function QuizSessionPage() {
     startQuiz,
     submitAnswer,
     nextQuestion,
+    sessionId,
   } = useQuiz();
 
   const quizStarted = useRef(false);
@@ -55,9 +56,9 @@ export default function QuizSessionPage() {
 
   useEffect(() => {
     if (state === 'finished') {
-      router.push(`/quiz/result?marksEarned=${marksEarned}&totalMarks=${totalMarks}&correct=${correct}&wrong=${wrong}&skipped=${skipped}&negativePenalty=${negativePenalty}`);
+      router.push(`/quiz/result?marksEarned=${marksEarned}&totalMarks=${totalMarks}&correct=${correct}&wrong=${wrong}&skipped=${skipped}&negativePenalty=${negativePenalty}&sessionId=${sessionId ?? ''}`);
     }
-  }, [state, router, marksEarned, totalMarks, correct, wrong, skipped, negativePenalty]);
+  }, [state, router, marksEarned, totalMarks, correct, wrong, skipped, negativePenalty, sessionId]);
 
   if (state === 'loading') {
     return (

@@ -66,6 +66,7 @@ export default function MockTestTakingPage() {
 
         if (user) {
           try {
+            const mtTitle = (mtData.title as string) ?? `Mock Test #${mtData.serial_number}`;
             const session = await databases.createDocument(DB_ID, 'quiz_sessions', ID.unique(), {
               quizId: mockTestId,
               userId: user.id,
@@ -73,6 +74,9 @@ export default function MockTestTakingPage() {
               totalQuestions: typed.length,
               maxScore: typed.length,
               status: 'active',
+              type: 'mock_test',
+              title: mtTitle,
+              reference_id: mockTestId,
             });
             setSessionId(session.$id);
           } catch {}
@@ -131,6 +135,8 @@ export default function MockTestTakingPage() {
     if (sid && user) {
       (async () => {
         try {
+          const mtData = (await databases.getDocument(DB_ID, 'mock_tests', mockTestId)) as Record<string, unknown>;
+          const mtTitle = (mtData.title as string) ?? `Mock Test #${mtData.serial_number}`;
           await databases.updateDocument(DB_ID, 'quiz_sessions', sid, {
             submittedAt: new Date().toISOString(),
             status: 'submitted',
@@ -138,6 +144,9 @@ export default function MockTestTakingPage() {
             correctCount: correct,
             wrongCount: wrong,
             attemptedCount: correct + wrong,
+            type: 'mock_test',
+            title: mtTitle,
+            reference_id: mockTestId,
           });
 
           for (const qu of currentQuestions) {

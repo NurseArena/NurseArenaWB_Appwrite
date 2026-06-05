@@ -1,17 +1,23 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useExam } from '@/hooks/useExam';
 import { useExamStore } from '@/store/examStore';
 import { useAuthStore } from '@/store/authStore';
 import { useXP } from '@/hooks/useXP';
 import { Card } from '@/components/ui/card';
-import { Swords, Zap, ScrollText, TrendingUp, Trophy, Target, BookOpen, Star } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Swords, Zap, TrendingUp, Trophy, Target, BookOpen, Star, Eye, History } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { EXAMS } from '@/lib/exam-config';
+import { databases } from '@/lib/appwrite/client';
+import { Query } from 'appwrite';
 import { SpeedSeekerBadge } from '@/components/gamification/SpeedSeekerBadge';
 import { PracticePickerModal } from '@/components/exam/PracticePickerModal';
+import type { QuizSessionRecord } from '@/types/quiz';
+
+const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -20,6 +26,24 @@ export default function DashboardPage() {
   const user = useAuthStore((s) => s.user);
   const { marks, xp, currentTier, nextTier } = useXP();
   const [showPicker, setShowPicker] = useState(false);
+  const [recentSessions, setRecentSessions] = useState<QuizSessionRecord[]>([]);
+
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { documents } = await databases.listDocuments(DB_ID, 'quiz_sessions', [
+          Query.equal('userId', user.id),
+          Query.equal('status', 'submitted'),
+          Query.orderDesc('submittedAt'),
+          Query.limit(5),
+        ]);
+        if (!cancelled) setRecentSessions(documents as unknown as QuizSessionRecord[]);
+      } catch {}
+    })();
+    return () => { cancelled = true; };
+  }, [user]);
 
   const totalMarks = user?.totalMarksEarned ?? 0;
   const totalCorrect = user?.totalCorrect ?? 0;
@@ -144,6 +168,53 @@ export default function DashboardPage() {
           </p>
         )}
       </Card>
+
+      {recentSessions.length > 0 && (
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-ink flex items-center gap-2">
+              <History size={20} className="text-primary" />
+              Recent Activity
+            </h2>
+            <Link href="/history" className="text-xs font-bold text-primary hover:underline">
+              View All
+            </Link>
+          </div>
+          <div className="space-y-2">
+            {recentSessions.map((s) => {
+              const typeLabel = s.type === 'mock_test' ? 'Mock Test' : s.type === 'rapid_fire' ? 'Rapid Fire' : s.type === 'pyq' ? 'PYQ' : s.type === 'topicwise' ? 'Practice' : 'Quiz';
+              const pct = s.maxScore > 0 ? Math.round((s.score / s.maxScore) * 100) : 0;
+              const Icon = s.type === 'mock_test' ? Swords : s.type === 'rapid_fire' ? Zap : BookOpen;
+              const color = s.type === 'mock_test' ? 'text-accent' : s.type === 'rapid_fire' ? 'text-warning' : 'text-primary';
+              return (
+                <Card key={s.id} className="p-3 flex items-center justify-between">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${color} bg-current/10`}>
+                      <Icon size={16} className={color} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-ink truncate">{s.title ?? typeLabel}</p>
+                      <p className="text-xs text-ink-muted">
+                        Score: {s.score}/{s.maxScore} ({pct}%)
+                      </p>
+                    </div>
+                  </div>
+                  <Link
+                    href={s.type === 'mock_test'
+                      ? `/mock-test/result?sessionId=${s.id}`
+                      : `/quiz/result?marksEarned=${s.score}&totalMarks=${s.maxScore}&correct=${s.correctCount}&wrong=${s.wrongCount}&sessionId=${s.id}`
+                    }
+                  >
+                    <Button size="sm" variant="ghost">
+                      <Eye size={14} />
+                    </Button>
+                  </Link>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }

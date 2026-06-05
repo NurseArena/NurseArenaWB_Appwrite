@@ -176,6 +176,9 @@ async function main() {
     { key: 'attemptNumber', type: 'integer', required: false },
     { key: 'examCode', type: 'string', required: false, size: 50 },
     { key: 'isLiveAttempt', type: 'boolean', required: false, default: false },
+    { key: 'type', type: 'string', required: false, size: 30 },
+    { key: 'title', type: 'string', required: false, size: 255 },
+    { key: 'reference_id', type: 'string', required: false, size: 50 },
   ]);
 
   // 6. session_answers

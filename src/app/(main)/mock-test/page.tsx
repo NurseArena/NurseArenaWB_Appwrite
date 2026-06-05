@@ -1,22 +1,30 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useExam } from '@/hooks/useExam';
+import { useCompletedMockTests } from '@/hooks/useSessionHistory';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Clock, ListChecks, Swords, CalendarDays, Play } from 'lucide-react';
+import { Clock, ListChecks, Swords, CalendarDays, Play, CheckCircle2, Eye } from 'lucide-react';
 import { EXAMS } from '@/lib/exam-config';
 import { databases } from '@/lib/appwrite/client';
 import { Query } from 'appwrite';
 import Link from 'next/link';
+import type { QuizSessionRecord } from '@/types/quiz';
 
 const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
-import { useState } from 'react';
 
 export default function MockTestPage() {
   const { examName, activeExam } = useExam();
   const config = EXAMS[activeExam];
   const [mockTests, setMockTests] = useState<Record<string, unknown>[]>([]);
+  const { completedIds, sessions } = useCompletedMockTests();
+
+  const sessionByRef = new Map<string, QuizSessionRecord>();
+  for (const s of sessions) {
+    const ref = s.reference_id ?? s.quizId;
+    sessionByRef.set(ref, s);
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -99,23 +107,46 @@ export default function MockTestPage() {
           </Card>
         ) : (
           <div className="space-y-3">
-            {mockTests.map((mt) => (
-              <Card key={mt.$id as string} className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-bold text-ink">{mt.title as string}</p>
-                    <p className="text-xs text-ink-muted">
-                      {Math.round(Number(mt.duration_seconds ?? 0) / 60)} min · 100 questions
-                    </p>
+            {mockTests.map((mt) => {
+              const mtId = mt.$id as string;
+              const completed = completedIds.has(mtId);
+              const session = sessionByRef.get(mtId);
+              return (
+                <Card key={mtId} className={`p-4 ${completed ? 'border-success/30' : ''}`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="font-bold text-ink truncate">{mt.title as string}</p>
+                        {completed && <CheckCircle2 size={16} className="text-success shrink-0" />}
+                      </div>
+                      <p className="text-xs text-ink-muted">
+                        {Math.round(Number(mt.duration_seconds ?? 0) / 60)} min · 100 questions
+                      </p>
+                      {completed && session && (
+                        <p className="text-xs text-success mt-0.5">
+                          Score: {session.score}/{session.maxScore} · {Math.round((session.score / (session.maxScore || 1)) * 100)}%
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {completed && session ? (
+                        <Link href={`/mock-test/result?sessionId=${session.id}`}>
+                          <Button size="sm" variant="secondary">
+                            <Eye size={14} /> Review
+                          </Button>
+                        </Link>
+                      ) : (
+                        <Link href={`/mock-test/${mtId}`}>
+                          <Button size="sm">
+                            <Play size={16} /> Start
+                          </Button>
+                        </Link>
+                      )}
+                    </div>
                   </div>
-                  <Link href={`/mock-test/${mt.$id}`}>
-                    <Button size="sm">
-                      <Play size={16} /> Start
-                    </Button>
-                  </Link>
-                </div>
-              </Card>
-            ))}
+                </Card>
+              );
+            })}
           </div>
         )}
       </div>

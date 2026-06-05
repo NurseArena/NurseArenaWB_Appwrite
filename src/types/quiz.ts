@@ -120,6 +120,9 @@ export interface QuizSessionRecord {
   maxScore: number;
   status: 'in_progress' | 'submitted' | 'abandoned';
   quiz?: Quiz;
+  type?: 'mock_test' | 'quiz' | 'topicwise' | 'rapid_fire' | 'pyq';
+  title?: string;
+  reference_id?: string;
 }
 
 export interface SessionAnswerRecord {

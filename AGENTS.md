@@ -62,7 +62,7 @@ Create these in Appwrite Cloud Console (all lowercase camelCase attribute names)
 ### `quiz_sessions` — Quiz attempt sessions
 | Attribute | Type | Notes |
 |-----------|------|-------|
-| quizId | string | Quiz document ID |
+| quizId | string | Quiz/mock-test/reference document ID |
 | userId | string | User document ID |
 | totalQuestions | number | Total questions |
 | maxScore | number | Maximum possible score |
@@ -72,6 +72,10 @@ Create these in Appwrite Cloud Console (all lowercase camelCase attribute names)
 | score | number | Score earned |
 | correctCount | number | Correct answers |
 | wrongCount | number | Wrong answers |
+| attemptedCount | number | Answered count |
+| type | string | `mock_test` / `quiz` / `topicwise` / `rapid_fire` / `pyq` |
+| title | string | Human-readable title (e.g. "Mock Test 1", "PYQ 2024") |
+| reference_id | string | The original document ID (mock_test_id, quiz_id, etc.) |
 
 ### `session_answers` — Per-question answers
 | Attribute | Type | Notes |

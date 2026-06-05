@@ -41,6 +41,7 @@ export default function RapidFirePage() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const autoAdvanceRef = useRef<NodeJS.Timeout | null>(null);
   const questionStartRef = useRef(0);
+  const sessionIdRef = useRef<string | null>(null);
 
   const q = questions[currentIndex];
   const answered = q ? answers[q.id] : undefined;
@@ -71,19 +72,33 @@ export default function RapidFirePage() {
     setShowExplanation(true);
 
     if (user) {
+      const timeMs = Date.now() - questionStartRef.current;
       databases.createDocument(DB_ID, 'attempts', ID.unique(), {
         userId: user.id,
         questionId: q.id,
         selectedOption: selected,
         isCorrect,
-        timeTakenMs: Date.now() - questionStartRef.current,
+        timeTakenMs: timeMs,
       }).catch(() => {});
+      if (sessionIdRef.current) {
+        databases.createDocument(DB_ID, 'session_answers', ID.unique(), {
+          sessionId: sessionIdRef.current,
+          userId: user.id,
+          questionId: q.id,
+          orderIndex: currentIndex,
+          selectedOption: selected,
+          isCorrect,
+          marksAwarded: isCorrect ? 1 : 0,
+          timeTakenMs: timeMs,
+          answeredAt: new Date().toISOString(),
+        }).catch(() => {});
+      }
     }
 
     autoAdvanceRef.current = setTimeout(() => {
       advanceToNext();
     }, 3000);
-  }, [q, answered, user, advanceToNext]);
+  }, [q, answered, user, advanceToNext, currentIndex]);
 
   useEffect(() => {
     if (phase !== 'active') return;
@@ -155,14 +170,46 @@ export default function RapidFirePage() {
       explanation: rq.explanation as string,
     }));
     setQuestions(mapped);
+    if (user) {
+      try {
+        const session = await databases.createDocument(DB_ID, 'quiz_sessions', ID.unique(), {
+          userId: user.id,
+          quizId: `rapid_fire_${Date.now()}`,
+          startedAt: new Date().toISOString(),
+          totalQuestions: TOTAL_QUESTIONS,
+          maxScore: TOTAL_QUESTIONS,
+          status: 'active',
+          type: 'rapid_fire',
+          title: 'Rapid Fire',
+        });
+        sessionIdRef.current = session.$id;
+      } catch {}
+    }
     setPhase('active');
   }, [activeExam, user, clearTimers]);
 
+  const submitSession = useCallback(async () => {
+    if (sessionIdRef.current && user) {
+      try {
+        await databases.updateDocument(DB_ID, 'quiz_sessions', sessionIdRef.current, {
+          submittedAt: new Date().toISOString(),
+          status: 'submitted',
+          score: correctCount,
+          correctCount,
+          wrongCount,
+          attemptedCount: correctCount + wrongCount,
+          type: 'rapid_fire',
+        });
+      } catch {}
+    }
+  }, [user, correctCount, wrongCount]);
+
   useEffect(() => {
     if (phase === 'result' && user && questions.length > 0) {
+      submitSession();
       updateStats(user.id, user.displayName ?? '', user.photoURL ?? '', activeExam, correctCount, TOTAL_QUESTIONS, correctCount, wrongCount, skippedCount);
     }
-  }, [phase, user, activeExam, questions.length, correctCount, wrongCount, skippedCount]);
+  }, [phase, user, activeExam, questions.length, correctCount, wrongCount, skippedCount, submitSession]);
 
   useEffect(() => {
     return clearTimers;

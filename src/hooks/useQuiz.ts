@@ -211,6 +211,7 @@ export function useQuiz() {
           ? questions.length * Number(scoringProfileRef.current.marks_correct)
           : questions.length;
         try {
+          const quizTitle = (quiz?.title as string) ?? 'Quiz';
           const session = await databases.createDocument(
             DB_ID,
             'quiz_sessions',
@@ -222,6 +223,9 @@ export function useQuiz() {
               totalQuestions: questions.length,
               maxScore: maxScore,
               status: 'active',
+              type: 'quiz',
+              title: quizTitle,
+              reference_id: quizId,
             }
           );
           if (session) {
@@ -368,6 +372,7 @@ export function useQuiz() {
           correctCount: correct,
           wrongCount: wrong,
           attemptedCount: correct + wrong,
+          type: 'quiz',
         }).then(() => {}, () => {});
       }
 
@@ -429,6 +434,7 @@ export function useQuiz() {
         correctCount: marksData.correct,
         wrongCount: marksData.wrong,
         attemptedCount: marksData.correct + marksData.wrong,
+        type: 'quiz',
       });
     }
 

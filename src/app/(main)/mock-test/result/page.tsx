@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -28,18 +28,30 @@ function ResultContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const score = parseInt(searchParams.get('score') ?? '0');
-  const total = parseInt(searchParams.get('total') ?? '0');
-  const correct = parseInt(searchParams.get('correct') ?? '0');
-  const wrong = parseInt(searchParams.get('wrong') ?? '0');
-  const skipped = parseInt(searchParams.get('skipped') ?? '0');
+  const searchScore = parseInt(searchParams.get('score') ?? '');
+  const searchTotal = parseInt(searchParams.get('total') ?? '');
+  const searchCorrect = parseInt(searchParams.get('correct') ?? '');
+  const searchWrong = parseInt(searchParams.get('wrong') ?? '');
+  const searchSkipped = parseInt(searchParams.get('skipped') ?? '');
   const sessionId = searchParams.get('sessionId') ?? '';
 
   const [questions, setQuestions] = useState<ReviewQuestion[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'correct' | 'wrong' | 'skipped'>('all');
+  const [computedScore, setComputedScore] = useState(searchScore);
+  const [computedTotal, setComputedTotal] = useState(searchTotal);
+  const [computedCorrect, setComputedCorrect] = useState(searchCorrect);
+  const [computedWrong, setComputedWrong] = useState(searchWrong);
+  const [computedSkipped, setComputedSkipped] = useState(searchSkipped);
+
+  const score = isNaN(computedScore) ? 0 : computedScore;
+  const total = isNaN(computedTotal) ? 0 : computedTotal;
+  const correct = isNaN(computedCorrect) ? 0 : computedCorrect;
+  const wrong = isNaN(computedWrong) ? 0 : computedWrong;
+  const skipped = isNaN(computedSkipped) ? 0 : computedSkipped;
 
   const percentage = total > 0 ? Math.round((score / total) * 100) : 0;
+  const paramsResolvedRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -49,6 +61,21 @@ function ResultContent() {
           setQuestions([]);
           return;
         }
+
+        if (!paramsResolvedRef.current && isNaN(computedTotal)) {
+          try {
+            const sessionDoc = await databases.getDocument(DB_ID, 'quiz_sessions', sessionId) as Record<string, unknown>;
+            if (!cancelled && sessionDoc) {
+              paramsResolvedRef.current = true;
+              setComputedScore(Number(sessionDoc.score) ?? 0);
+              setComputedTotal(Number(sessionDoc.maxScore) ?? 0);
+              setComputedCorrect(Number(sessionDoc.correctCount) ?? 0);
+              setComputedWrong(Number(sessionDoc.wrongCount) ?? 0);
+              setComputedSkipped((Number(sessionDoc.totalQuestions) ?? 0) - (Number(sessionDoc.correctCount) ?? 0) - (Number(sessionDoc.wrongCount) ?? 0));
+            }
+          } catch {}
+        }
+
         const { documents: answers } = await databases.listDocuments(DB_ID, 'session_answers', [
           Query.equal('sessionId', sessionId),
           Query.orderAsc('orderIndex'),

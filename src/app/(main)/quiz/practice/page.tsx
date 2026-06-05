@@ -41,6 +41,7 @@ function PracticeContent() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, PQAnswer>>({});
   const questionStartRef = useRef(0);
+  const sessionIdRef = useRef<string | null>(null);
 
   const q = questions[currentIndex];
   const answered = q ? answers[q.id] : undefined;
@@ -91,6 +92,22 @@ function PracticeContent() {
         }));
         setQuestions(mapped);
         questionStartRef.current = Date.now();
+        if (user) {
+          try {
+            const session = await databases.createDocument(DB_ID, 'quiz_sessions', ID.unique(), {
+              userId: user.id,
+              quizId: `topicwise_${subject ?? ''}_${topic ?? ''}`,
+              startedAt: new Date().toISOString(),
+              totalQuestions: mapped.length,
+              maxScore: mapped.length,
+              status: 'active',
+              type: 'topicwise',
+              title: `${subject ?? 'Practice'}${topic ? ` - ${topic}` : ''}`,
+              reference_id: `topicwise_${subject ?? ''}_${topic ?? ''}`,
+            });
+            sessionIdRef.current = session.$id;
+          } catch {}
+        }
         setPhase('active');
       } catch {
         console.error('Failed to load practice questions');
@@ -106,22 +123,53 @@ function PracticeContent() {
     const isCorrect = selected.toUpperCase() === q.correct.toUpperCase();
     setAnswers((prev) => ({ ...prev, [q.id]: { selected, isCorrect } }));
     if (user) {
+      const timeMs = Date.now() - questionStartRef.current;
       databases.createDocument(DB_ID, 'attempts', ID.unique(), {
         userId: user.id,
         questionId: q.id,
         selectedOption: selected,
         isCorrect,
-        timeTakenMs: Date.now() - questionStartRef.current,
+        timeTakenMs: timeMs,
       }).catch(() => {});
+      if (sessionIdRef.current) {
+        databases.createDocument(DB_ID, 'session_answers', ID.unique(), {
+          sessionId: sessionIdRef.current,
+          userId: user.id,
+          questionId: q.id,
+          orderIndex: currentIndex,
+          selectedOption: selected,
+          isCorrect,
+          marksAwarded: isCorrect ? 1 : 0,
+          timeTakenMs: timeMs,
+          answeredAt: new Date().toISOString(),
+        }).catch(() => {});
+      }
     }
-  }, [q, answered, user]);
+  }, [q, answered, user, currentIndex]);
+
+  const submitSession = useCallback(async () => {
+    if (sessionIdRef.current && user) {
+      try {
+        await databases.updateDocument(DB_ID, 'quiz_sessions', sessionIdRef.current, {
+          submittedAt: new Date().toISOString(),
+          status: 'submitted',
+          score: correctCount,
+          correctCount,
+          wrongCount,
+          attemptedCount: correctCount + wrongCount,
+          type: 'topicwise',
+        });
+      } catch {}
+    }
+  }, [user, correctCount, wrongCount]);
 
   useEffect(() => {
     if (phase === 'result' && user && questions.length > 0) {
       const skipped = questions.length - correctCount - wrongCount;
+      submitSession();
       updateStats(user.id, user.displayName ?? '', user.photoURL ?? '', activeExam, correctCount, questions.length, correctCount, wrongCount, skipped);
     }
-  }, [phase, user, activeExam, questions.length, correctCount, wrongCount]);
+  }, [phase, user, activeExam, questions.length, correctCount, wrongCount, submitSession]);
 
   if (phase === 'loading') {
     return (
