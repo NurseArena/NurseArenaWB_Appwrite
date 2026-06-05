@@ -2,7 +2,7 @@
 import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { databases } from '@/lib/appwrite/client';
-import { ID } from 'appwrite';
+import { ID, Query } from 'appwrite';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Upload, FileSpreadsheet, AlertCircle, CheckCircle2, ArrowLeft } from 'lucide-react';
@@ -30,18 +30,51 @@ export default function AdminMockTestUploadPage() {
   const [course, setCourse] = useState('');
   const [rows, setRows] = useState<UploadRow[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [result, setResult] = useState<{ success: number; failed: number; mockTestId?: string } | null>(null);
+  const [result, setResult] = useState<{ success: number; failed: number; mockTestId?: string; message?: string } | null>(null);
   const [dragOver, setDragOver] = useState(false);
 
+  function parseCSVLine(line: string): string[] {
+    const fields: string[] = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (inQuotes) {
+        if (ch === '"') {
+          if (i + 1 < line.length && line[i + 1] === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = false;
+          }
+        } else {
+          current += ch;
+        }
+      } else {
+        if (ch === '"') {
+          inQuotes = true;
+        } else if (ch === ',') {
+          fields.push(current);
+          current = '';
+        } else {
+          current += ch;
+        }
+      }
+    }
+    fields.push(current);
+    return fields;
+  }
+
   const parseCSV = useCallback((text: string) => {
-    const lines = text.split('\n').filter((l) => l.trim());
+    const clean = text.replace(/^\ufeff/, '');
+    const lines = clean.split('\n').filter((l) => l.trim());
     if (lines.length < 2) return;
-    const headers = lines[0].split(',').map((h) => h.trim().toLowerCase());
+    const headers = parseCSVLine(lines[0]).map((h) => h.trim().toLowerCase());
     const required = ['question', 'option_a', 'option_b', 'option_c', 'option_d', 'correct'];
     const parsed: UploadRow[] = [];
     let errorCount = 0;
     for (let i = 1; i < lines.length; i++) {
-      const vals = lines[i].split(',').map((v) => v.trim().replace(/^"|"$/g, ''));
+      const vals = parseCSVLine(lines[i]).map((v) => v.trim());
       const row: Record<string, string> = {};
       headers.forEach((h, idx) => { row[h] = vals[idx] ?? ''; });
       const errors: string[] = [];
@@ -91,15 +124,15 @@ export default function AdminMockTestUploadPage() {
     try {
       const validRows = rows.filter((r) => r.valid);
       if (validRows.length !== 100) {
-        setResult({ success: 0, failed: 1 });
+        setResult({ success: 0, failed: 1, message: `Need exactly 100 valid questions, got ${validRows.length}` });
         return;
       }
 
       const { documents: existing } = await databases.listDocuments(DB_ID, 'mock_tests', [
-        { method: 'equal', attribute: 'exam_code', values: [course] },
-        { method: 'orderDesc', attribute: 'serial_number' },
-        { method: 'limit', attribute: '', values: [1] },
-      ] as any);
+        Query.equal('exam_code', course),
+        Query.orderDesc('serial_number'),
+        Query.limit(1),
+      ]);
       const highest = (existing as any[])?.[0]?.serial_number ?? 0;
       const serialNumber = Number(highest) + 1;
       const title = `${course}_${serialNumber}`;
@@ -142,6 +175,7 @@ export default function AdminMockTestUploadPage() {
       if (failed === 0) setRows([]);
     } catch (err) {
       console.error('Upload failed:', err);
+      setResult({ success: 0, failed: 1, message: err instanceof Error ? err.message : 'Upload failed' });
     } finally {
       setUploading(false);
     }
@@ -251,6 +285,15 @@ export default function AdminMockTestUploadPage() {
             <div className="flex items-center gap-3">
               <AlertCircle size={20} className="text-warning" />
               <span className="text-sm text-ink">{result.success} uploaded, {result.failed} failed</span>
+            </div>
+          </Card>
+        )}
+
+        {result && result.failed > 0 && !result.mockTestId && (
+          <Card className="p-4 border-danger/30">
+            <div className="flex items-center gap-3">
+              <AlertCircle size={20} className="text-danger" />
+              <span className="text-sm text-ink">{result.message || 'Upload failed. Check your CSV and try again.'}</span>
             </div>
           </Card>
         )}

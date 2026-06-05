@@ -134,7 +134,7 @@ def main():
 
     questions = parse_questions(input_path)
 
-    with open(output_path, 'w', encoding='utf-8', newline='') as f:
+    with open(output_path, 'w', encoding='utf-8-sig', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=[
             'question', 'option_a', 'option_b', 'option_c', 'option_d', 'correct', 'explanation',
         ])
