@@ -6,6 +6,7 @@ import { databases } from '@/lib/appwrite/client';
 import { Query, ID } from 'appwrite';
 import { useExam } from '@/hooks/useExam';
 import { useAuthStore } from '@/store/authStore';
+import { updateStats } from '@/services/updateStats';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ArrowRight, CheckCircle2, XCircle, MinusCircle, Lightbulb, Trophy, Home, RotateCcw } from 'lucide-react';
@@ -114,6 +115,13 @@ function PracticeContent() {
       }).catch(() => {});
     }
   }, [q, answered, user]);
+
+  useEffect(() => {
+    if (phase === 'result' && user && questions.length > 0) {
+      const skipped = questions.length - correctCount - wrongCount;
+      updateStats(user.id, user.displayName, user.photoURL, activeExam, correctCount, questions.length, correctCount, wrongCount, skipped);
+    }
+  }, [phase, user, activeExam, questions.length, correctCount, wrongCount]);
 
   if (phase === 'loading') {
     return (

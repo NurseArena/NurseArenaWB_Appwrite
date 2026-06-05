@@ -32,6 +32,7 @@ export function useQuiz() {
   const responsesRef = useRef<{ selected: string | string[] | null; category: 'I' | 'II' }[]>([]);
   const scoringProfileRef = useRef<ScoringProfile | null>(null);
   const sessionIdRef = useRef<string | null>(null);
+  const examCodeRef = useRef<string | null>(null);
   const [scoringProfile, setScoringProfile] = useState<ScoringProfile | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
 
@@ -102,6 +103,8 @@ export function useQuiz() {
         [Query.equal('$id', quizId), Query.limit(1)]
       );
       const quiz = quizzes[0] as Record<string, unknown> | undefined;
+
+      examCodeRef.current = (quiz?.exam_code as string) ?? null;
 
       if (quiz?.scoring_profile_id) {
         const sp = { marks_correct: Number(quiz.marks_correct ?? 1), marks_wrong: Number(quiz.marks_wrong ?? -0.25) } as ScoringProfile;
@@ -365,8 +368,60 @@ export function useQuiz() {
       }
 
       setState('finished');
+
+      if (user && examCodeRef.current) {
+        databases.getDocument(DB_ID, 'profiles', user.id).then((profile) => {
+          if (profile) {
+            const p = profile as Record<string, unknown>;
+            const newTotalMarksEarned = (p.totalMarksEarned as number ?? 0) + marksData.marksEarned;
+            const newTotalAttempted = (p.totalQuestionsAttempted as number ?? 0) + marksData.totalMarks;
+            const newCorrect = (p.totalCorrect as number ?? 0) + marksData.correct;
+            const newWrong = (p.totalWrong as number ?? 0) + marksData.wrong;
+            const newSkipped = (p.totalSkipped as number ?? 0) + marksData.skipped;
+
+            databases.updateDocument(DB_ID, 'profiles', user.id, {
+              totalMarksEarned: newTotalMarksEarned,
+              totalQuestionsAttempted: newTotalAttempted,
+              totalCorrect: newCorrect,
+              totalWrong: newWrong,
+              totalSkipped: newSkipped,
+            }).then(() => {
+              const examCode = examCodeRef.current!;
+              const attemptedQ = newCorrect + newWrong;
+              const percentage = attemptedQ > 0 ? (newCorrect / attemptedQ) * 100 : 0;
+              const docId = `${user.id}_${examCode}_all_time`;
+
+              databases.getDocument(DB_ID, 'leaderboard', docId).then((existing) => {
+                if (existing) {
+                  databases.updateDocument(DB_ID, 'leaderboard', docId, {
+                    marksEarned: newTotalMarksEarned,
+                    percentage: Math.round(percentage * 100) / 100,
+                    wrong: newWrong,
+                    totalMarksEarned: newTotalMarksEarned,
+                    displayName: user.displayName,
+                    photoURL: user.photoURL,
+                  }).then(() => {}, () => {});
+                }
+              }).catch(() => {
+                databases.createDocument(DB_ID, 'leaderboard', docId, {
+                  userId: user.id,
+                  exam_id: examCode,
+                  period_type: 'all_time',
+                  displayName: user.displayName,
+                  photoURL: user.photoURL,
+                  marksEarned: newTotalMarksEarned,
+                  percentage: Math.round(percentage * 100) / 100,
+                  wrong: newWrong,
+                  totalMarksEarned: newTotalMarksEarned,
+                  rank: 0,
+                }).then(() => {}, () => {});
+              });
+            }, () => {});
+          }
+        }, () => {});
+      }
     }
-  }, [setCurrentIndex, setQuestionStartTime, setMarksData, setState]);
+  }, [setCurrentIndex, setQuestionStartTime, setMarksData, setState, user]);
 
   const finishQuiz = useCallback(async () => {
     clearTimer();
@@ -403,13 +458,51 @@ export function useQuiz() {
           totalSkipped: number;
         };
         if (profile) {
+          const newTotalMarksEarned = (profile.totalMarksEarned ?? 0) + marksEarned;
+          const newTotalAttempted = (profile.totalQuestionsAttempted ?? 0) + totalMarks;
+          const newCorrect = (profile.totalCorrect ?? 0) + marksData.correct;
+          const newWrong = (profile.totalWrong ?? 0) + marksData.wrong;
+          const newSkipped = (profile.totalSkipped ?? 0) + marksData.skipped;
+
           await databases.updateDocument(DB_ID, 'profiles', user.id, {
-            totalMarksEarned: (profile.totalMarksEarned ?? 0) + marksEarned,
-            totalQuestionsAttempted: (profile.totalQuestionsAttempted ?? 0) + totalMarks,
-            totalCorrect: (profile.totalCorrect ?? 0) + marksData.correct,
-            totalWrong: (profile.totalWrong ?? 0) + marksData.wrong,
-            totalSkipped: (profile.totalSkipped ?? 0) + marksData.skipped,
+            totalMarksEarned: newTotalMarksEarned,
+            totalQuestionsAttempted: newTotalAttempted,
+            totalCorrect: newCorrect,
+            totalWrong: newWrong,
+            totalSkipped: newSkipped,
           });
+
+          if (examCodeRef.current) {
+            const examCode = examCodeRef.current;
+            const attemptedQ = newCorrect + newWrong;
+            const percentage = attemptedQ > 0 ? (newCorrect / attemptedQ) * 100 : 0;
+            const docId = `${user.id}_${examCode}_all_time`;
+
+            try {
+              await databases.getDocument(DB_ID, 'leaderboard', docId);
+              await databases.updateDocument(DB_ID, 'leaderboard', docId, {
+                marksEarned: newTotalMarksEarned,
+                percentage: Math.round(percentage * 100) / 100,
+                wrong: newWrong,
+                totalMarksEarned: newTotalMarksEarned,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+              });
+            } catch {
+              await databases.createDocument(DB_ID, 'leaderboard', docId, {
+                userId: user.id,
+                exam_id: examCode,
+                period_type: 'all_time',
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+                marksEarned: newTotalMarksEarned,
+                percentage: Math.round(percentage * 100) / 100,
+                wrong: newWrong,
+                totalMarksEarned: newTotalMarksEarned,
+                rank: 0,
+              });
+            }
+          }
         }
       } catch {}
     }

@@ -5,6 +5,7 @@ import { databases } from '@/lib/appwrite/client';
 import { Query, ID } from 'appwrite';
 import { useExam } from '@/hooks/useExam';
 import { useAuthStore } from '@/store/authStore';
+import { updateStats } from '@/services/updateStats';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Zap, Home, Trophy, CheckCircle2, XCircle, MinusCircle, Lightbulb } from 'lucide-react';
@@ -156,6 +157,12 @@ export default function RapidFirePage() {
     setQuestions(mapped);
     setPhase('active');
   }, [activeExam, user, clearTimers]);
+
+  useEffect(() => {
+    if (phase === 'result' && user && questions.length > 0) {
+      updateStats(user.id, user.displayName, user.photoURL, activeExam, correctCount, TOTAL_QUESTIONS, correctCount, wrongCount, skippedCount);
+    }
+  }, [phase, user, activeExam, questions.length, correctCount, wrongCount, skippedCount]);
 
   useEffect(() => {
     return clearTimers;

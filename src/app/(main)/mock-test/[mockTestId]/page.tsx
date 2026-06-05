@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { databases } from '@/lib/appwrite/client';
 import { Query, ID } from 'appwrite';
 import { useAuthStore } from '@/store/authStore';
+import { updateStats } from '@/services/updateStats';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -154,6 +155,9 @@ export default function MockTestTakingPage() {
             });
           }
         } catch {}
+        if (user && examCode) {
+          updateStats(user.id, user.displayName, user.photoURL, examCode, score, total, correct, wrong, skipped);
+        }
         setPhase('finished');
         const p = new URLSearchParams({
           sessionId: sid ?? '',
@@ -167,6 +171,9 @@ export default function MockTestTakingPage() {
         router.push(`/mock-test/result?${p.toString()}`);
       })();
     } else {
+      if (user && examCode) {
+        updateStats(user.id, user.displayName, user.photoURL, examCode, score, total, correct, wrong, skipped);
+      }
       setPhase('finished');
       const p = new URLSearchParams({
         sessionId: '',
