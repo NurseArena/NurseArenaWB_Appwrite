@@ -307,6 +307,56 @@ async function main() {
     { key: 'name', type: 'string', required: true, size: 100 },
   ]);
 
+  // ── Indexes for leaderboard ──────────────────────────────────────────
+  console.log('\nCreating indexes for leaderboard...');
+  for (const idx of [
+    {
+      key: 'exam_period_marks_desc',
+      type: 'key',
+      attributes: ['exam_id', 'period_type', 'marksEarned'],
+      orders: ['ASC', 'ASC', 'DESC'],
+    },
+    {
+      key: 'exam_period',
+      type: 'key',
+      attributes: ['exam_id', 'period_type'],
+      orders: ['ASC', 'ASC'],
+    },
+  ]) {
+    try {
+      await databases.createIndex(DB_ID, 'leaderboard', idx.key, idx.type, idx.attributes, idx.orders);
+      console.log(`  Created index: ${idx.key}`);
+    } catch (e) {
+      if (e.message?.includes('already exists') || e.type === 'index_already_exists') {
+        console.log(`  skip (exists): ${idx.key}`);
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  // ── Seed a sample leaderboard entry for testing ──────────────────────
+  console.log('\nSeeding sample leaderboard entry...');
+  const sampleUserId = 'seed_demo_user';
+  const sampleDocId = `${sampleUserId}_JEPBN_all_time`;
+  try {
+    await databases.getDocument(DB_ID, 'leaderboard', sampleDocId);
+    console.log('  skip (already seeded)');
+  } catch {
+    await databases.createDocument(DB_ID, 'leaderboard', sampleDocId, {
+      userId: sampleUserId,
+      exam_id: 'JEPBN',
+      period_type: 'all_time',
+      displayName: 'Demo User',
+      photoURL: '',
+      marksEarned: 85.5,
+      percentage: 85.5,
+      wrong: 8,
+      rank: 1,
+    });
+    console.log('  Created demo leaderboard entry');
+  }
+
   console.log('\nAll done.');
 }
 

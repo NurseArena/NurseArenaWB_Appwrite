@@ -37,6 +37,7 @@ export default function LeaderboardPage() {
         const examId = config?.code;
         const queries = [
           ...(examId ? [Query.equal('exam_id', examId)] : []),
+          Query.equal('period_type', period),
           Query.orderDesc('marksEarned'),
           Query.limit(50),
         ];
@@ -56,12 +57,13 @@ export default function LeaderboardPage() {
           setRows(mapped);
         }
       } catch (err) {
-        console.error('Leaderboard fetch failed (try creating composite index: exam_id + marksEarned desc):', err);
-        // fallback: fetch without sorting if index missing
+        console.error('Leaderboard fetch failed (create composite index: exam_id ASC + period_type ASC + marksEarned DESC):', err);
+        // fallback: fetch without sorting
         try {
           const examId = config?.code;
           const { documents } = await databases.listDocuments(DB_ID, 'leaderboard', [
             ...(examId ? [Query.equal('exam_id', examId)] : []),
+            Query.equal('period_type', period),
             Query.limit(50),
           ]);
           if (!cancelled && documents) {

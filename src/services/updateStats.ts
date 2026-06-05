@@ -39,7 +39,6 @@ export async function updateStats(
         marksEarned: newTotalMarksEarned,
         percentage: Math.round(percentage * 100) / 100,
         wrong: newWrong,
-        totalMarksEarned: newTotalMarksEarned,
         displayName,
         photoURL,
       });
@@ -53,7 +52,6 @@ export async function updateStats(
         marksEarned: newTotalMarksEarned,
         percentage: Math.round(percentage * 100) / 100,
         wrong: newWrong,
-        totalMarksEarned: newTotalMarksEarned,
         rank: 0,
       });
     }
